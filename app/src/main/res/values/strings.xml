@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Magnetic Scale Speedometer</string>
+
+    <string name="warningNotAvailable">Magnetometer not available</string>
+
+    <string name="sensorLabel">Magnetic Field Sensor Data:</string>
+    <string name="xAxisValueLabel">X: %.2f μT  (avg: %.2f μT)</string>
+    <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.2f μT)</string>
+    <string name="zAxisValueLabel">Z: %.2f μT  (avg: %.2f μT)</string>
+    <string name="resetButtonLabel">Reset</string>
+
+    <string name="startTimeLabel">Start Time: %d ms</string>
+    <string name="endTimeLabel">End Time: %d ms</string>
+    <string name="runTimeLabel">Run Time: %d ms</string>
+
+    <string name="ratioLabel">Ratio: %f</string>
+    <string name="speedLabel">Speed: %.3f k/h [%.3f mph]</string>
+
+    <string name="distanceLabel">Distance (cm): </string>
+    <string name="distanceDefaultValue">10</string>
+
+    <string name="thresholdLabel">Threshold: </string>
+    <string name="thresholdDefaultValue">50</string>
+
+    <string name="scaleLabel">Scale: </string>
+    <string name="axisLabel">Axis: </string>
+    <!--    <string name=""></string>-->
+</resources>
