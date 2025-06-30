@@ -14,7 +14,7 @@
     <string name="runTimeLabel">Run Time: %d ms</string>
 
     <string name="ratioLabel">Ratio: %f</string>
-    <string name="speedLabel">Speed: %.3f k/h [%.3f mph]</string>
+    <string name="speedLabel">Speed: %.2f k/h [ %.2f mph ]</string>
 
     <string name="distanceLabel">Distance (cm): </string>
     <string name="distanceDefaultValue">10</string>
