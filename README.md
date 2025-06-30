@@ -1,4 +1,7 @@
-MagneticScaleSpeedometer
+Magnetic Scale Speedometer
+===========================
+
+concept based on a suggestion by Brendan Schyve
 
 Experimental app - Scale speedometer using an Android phone and two magnets
 
