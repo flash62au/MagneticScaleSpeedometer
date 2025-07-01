@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         super.onResume()
         // Register the sensor listener when the activity is resumed
         magnetometer?.also { magnet ->
-            sensorManager.registerListener(this, magnet, SensorManager.SENSOR_DELAY_NORMAL)
+            sensorManager.registerListener(this, magnet, SensorManager.SENSOR_DELAY_FASTEST)
         }
     }
 
