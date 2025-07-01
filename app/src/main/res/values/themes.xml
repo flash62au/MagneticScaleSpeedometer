@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MagneticScaleSpeedometer" parent="Theme.AppCompat" />
+    <style name="Theme.MagneticScaleSpeedometer" parent="Theme.AppCompat">
+        <item name="android:dropDownListViewStyle">@style/spinner_style</item>
+        <item name="android:spinnerDropDownItemStyle">@style/spinner_dropdown_item_style</item>
+        <item name="android:spinnerStyle">@style/spinner</item>
+        <item name="android:spinnerItemStyle">@style/spinner_item</item>
+    </style>
 </resources>

@@ -1,5 +1,6 @@
 package com.akersp.magneticscalespeedometer
 
+import android.app.Activity
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -8,6 +9,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -245,6 +247,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             // Handle the case where the input is not a valid number
             distanceEditText.error = "Invalid number"
         }
+
+        hideKeyboard()
     }
 
     private fun addXValueToHistory(value: Float) {
@@ -354,6 +358,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                         haveSeenFirstResponse = true
                         hasStarted = false
                         hasDroppedBelowThreshold = false
+                        hideKeyboard()
                         return
                     }
 
@@ -381,6 +386,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
     private fun startOrEndTimeHasChanged() {
         if (hasFinished) return
+
+        hideKeyboard()
 
         startTimeTextView.text = String.format(getString(R.string.startTimeLabel), startTime)
 
@@ -456,5 +463,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // This is called when the selection disappears from the spinner.
         // For example, when the adapter becomes empty.
         Log.d("Magnetic Scale Speedometer", "Nothing selected")
+    }
+
+    fun Context.hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    fun Activity.hideKeyboard() {
+        hideKeyboard(currentFocus ?: View(this))
     }
 }
