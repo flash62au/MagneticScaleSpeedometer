@@ -13,11 +13,17 @@
     <string name="endTimeLabel">End Time: %d ms</string>
     <string name="runTimeLabel">Run Time: %d ms</string>
 
+    <string name="startedNotice">Started</string>
+    <string name="endedNotice">Ended</string>
+
     <string name="ratioLabel">Ratio: %f</string>
-    <string name="speedLabel">Speed: %.2f k/h [ %.2f mph ]</string>
+    <string name="speedLabel">Speed: %.2f k/h ( %.2f mph )</string>
 
     <string name="distanceLabel">Distance (cm): </string>
     <string name="distanceDefaultValue">10</string>
+
+    <string name="ignoreFirstResponseLabel">Ignore first response (loco): </string>
+    <string name="ignoreFirstResponseNotice">Ignoring first response (loco)</string>
 
     <string name="thresholdLabel">Threshold: </string>
     <string name="thresholdDefaultValue">50</string>

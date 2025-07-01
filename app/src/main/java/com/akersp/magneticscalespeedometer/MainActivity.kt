@@ -11,18 +11,13 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.TextView
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
-import androidx.core.app.ActivityCompat
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.semantics.text
-import androidx.core.content.getSystemService
-import androidx.core.graphics.values
 
 class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnItemSelectedListener {
     // Add these at the top of your MainActivity class, with other properties
@@ -42,6 +37,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
     private lateinit var thresholdValueEditText: EditText
     private var threshold: Float = 50F
+
+    private lateinit var ignoreFirstResponseCheckBox: CheckBox
+    private var ignoreFirstResponse: Boolean = false
+    private var haveSeenFirstResponse: Boolean = false
 
     private var highestXZY: Float = 0F
     private val lastXValues = mutableListOf<Float>() // List to store last 10 X values
@@ -71,7 +70,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private var distance: Float = 0F
 
     private lateinit var axisSpinner: Spinner
-    private var selectedAxis: Int = 0; // X
+    private var selectedAxis: Int = 0 // X
 
     private lateinit var speedTextView: TextView
     private var speedCmPerSec: Float = 0F
@@ -176,6 +175,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         // *****************************
 
+        ignoreFirstResponseCheckBox = findViewById(R.id.ignoreFirstResponse)
+
+        // *****************************
+
         speedTextView = findViewById(R.id.speed)
 
         // *****************************
@@ -210,6 +213,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         lastZValues.clear() // Clear the history
 
         threshold = thresholdValueEditText.getText().toString().toFloat()
+
+        haveSeenFirstResponse = false
+        ignoreFirstResponse = ignoreFirstResponseCheckBox.isChecked
+        ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            Log.d("Magnetic Scale Speedometer", "onCheckedChangeListener: checked: $isChecked")
+            ignoreFirstResponse = isChecked
+            haveSeenFirstResponse = false
+        }
 
         startTimeTextView.text = ""
         endTimeTextView.text = ""
@@ -300,7 +311,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             }
 
             if (absXYZ < threshold) {
-                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Below threshold - Ignore")
+//                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Below threshold - Ignore")
                 hasDroppedBelowThreshold = true
                 return
             }
@@ -336,16 +347,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 }
 
                 if (count > 3) {
-                    if (!hasStarted) {
+
+                    if ( (ignoreFirstResponse) && (!haveSeenFirstResponse) ) {
+                        Toast.makeText(this, getString(R.string.ignoreFirstResponseNotice), Toast.LENGTH_SHORT).show()
+                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ignoring first response")
+                        haveSeenFirstResponse = true
+                        hasStarted = false
+                        hasDroppedBelowThreshold = false
+                        return
+                    }
+
+                    if (!hasStarted) {  // starting
+                        Toast.makeText(this, getString(R.string.startedNotice), Toast.LENGTH_SHORT).show()
                         Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Started")
                         startTime = System.currentTimeMillis()
                         hasStarted = true
                         hasDroppedBelowThreshold = false
-                    } else {
+                        startOrEndTimeHasChanged()
+                        return
+                    }
+
+                    if (!hasFinished) {
+                        Toast.makeText(this, getString(R.string.endedNotice), Toast.LENGTH_SHORT).show()
                         Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ended")
                         endTime = System.currentTimeMillis()
+                        startOrEndTimeHasChanged()
+                        return
                     }
-                    startOrEndTimeHasChanged()
                 }
             }
         }
@@ -406,7 +434,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         if (parent?.id == R.id.scalesList) { // Check if it's the correct spinner
             val selectedScale = parent.getItemAtPosition(position).toString()
-            Toast.makeText(this, "Selected: $selectedScale", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Selected: $selectedScale", Toast.LENGTH_SHORT).show()
             Log.d("Magnetic Scale Speedometer", "Selected scale: $selectedScale at position $position")
 
             ratio = scaleRatioFloats[position]

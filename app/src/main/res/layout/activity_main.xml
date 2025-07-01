@@ -48,6 +48,7 @@
                     android:ellipsize="none"
                     android:textColor="@color/white"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-condensed"
                     android:text="" />
 
             </LinearLayout>
@@ -72,6 +73,8 @@
                     android:text="@string/distanceDefaultValue"
                     android:layout_width="80sp"
                     android:layout_height="wrap_content"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
                     android:textSize="14sp"
                     android:inputType="number"
                     android:digits="0123456789."/>
@@ -98,6 +101,8 @@
                     android:text="@string/thresholdDefaultValue"
                     android:layout_width="80sp"
                     android:layout_height="wrap_content"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
                     android:textSize="14sp"
                     android:inputType="number"
                     android:digits="0123456789"/>
@@ -118,7 +123,6 @@
                     android:textSize="14sp"
                     android:text="@string/axisLabel" />
 
-
                 <Spinner
                     android:id="@+id/axisList"
                     android:layout_width="wrap_content"
@@ -127,6 +131,27 @@
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:text="" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="6dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:text="@string/ignoreFirstResponseLabel" />
+
+                <CheckBox
+                    android:id="@+id/ignoreFirstResponse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -141,16 +166,16 @@
                 android:id="@+id/sensorLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="0dp"
                 android:text="@string/sensorLabel"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/xAxisValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="0dp"
                 android:text="@string/xAxisValueLabel"
                 android:textSize="12sp"
                 android:textColor="@color/white" />
@@ -159,7 +184,7 @@
                 android:id="@+id/yAxisValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="0dp"
                 android:text="@string/yAxisValueLabel"
                 android:textSize="12sp"
                 android:textColor="@color/white" />
@@ -168,7 +193,7 @@
                 android:id="@+id/zAxisValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dip"
+                android:layout_marginBottom="4dip"
                 android:text="@string/zAxisValueLabel"
                 android:textColor="@color/white"
                 android:textSize="12sp"/>
@@ -177,28 +202,28 @@
                 android:id="@+id/startTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="0dp"
                 android:text="@string/startTimeLabel"
                 android:textColor="@color/offWhite"
-                android:textSize="14sp"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/endTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="0dp"
                 android:text="@string/endTimeLabel"
                 android:textColor="@color/offWhite"
-                android:textSize="14sp"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/runTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="4dp"
                 android:text="@string/runTimeLabel"
                 android:textColor="@color/offWhite"
-                android:textSize="14sp"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/ratio"
