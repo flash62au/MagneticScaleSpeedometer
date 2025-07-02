@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private lateinit var resetButton: Button
     private lateinit var yAxisTextView: TextView
     private lateinit var zAxisTextView: TextView
+    private lateinit var highestValueTextView: TextView
 
     private lateinit var thresholdValueEditText: EditText
     private var threshold: Float = 50F
@@ -61,6 +62,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private var startTime: Long = 0L
     private var endTime: Long = 0L
     private var runTime: Long = 0L
+
+    private var highestStart: Float = 0F
+    private var highestEnd: Float = 0F
 
     private lateinit var scalesSpinner: Spinner
     private lateinit var scaleRatioValues: Array<String> // To store ratios as strings
@@ -89,6 +93,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         xAxisTextView = findViewById(R.id.xAxisValue)
         yAxisTextView = findViewById(R.id.yAxisValue)
         zAxisTextView = findViewById(R.id.zAxisValue)
+        highestValueTextView = findViewById(R.id.highestValue)
 
         // Get an instance of the SensorManager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -101,6 +106,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             xAxisTextView.text = getString(R.string.warningNotAvailable)
             yAxisTextView.text = ""
             zAxisTextView.text = ""
+            highestValueTextView.text = ""
         }
 
         // *****************************
@@ -296,6 +302,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), xAxis, averageX)
             yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), yAxis, averageY)
             zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel), zAxis, averageZ)
+            highestValueTextView.text = String.format(getString(R.string.highestValueLabel), highestXZY)
 
             val absX = abs(xAxis)
             val absY = abs(yAxis)
@@ -369,6 +376,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                         Toast.makeText(this, getString(R.string.startedNotice), Toast.LENGTH_SHORT).show()
                         Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Started")
                         startTime = System.currentTimeMillis()
+                        highestStart = highestXZY
                         hasStarted = true
                         hasDroppedBelowThreshold = false
                         startOrEndTimeHasChanged()
@@ -378,6 +386,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                     if (!hasFinished) {
                         Toast.makeText(this, getString(R.string.endedNotice), Toast.LENGTH_SHORT).show()
                         Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ended")
+                        highestEnd = highestXZY
                         endTime = System.currentTimeMillis()
                         startOrEndTimeHasChanged()
                         return
@@ -392,9 +401,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         hideKeyboard()
 
-        highestXZY = 0F
-
-        startTimeTextView.text = String.format(getString(R.string.startTimeLabel), startTime)
+        startTimeTextView.text = String.format(getString(R.string.startTimeLabel), startTime, highestStart)
 
         runTime = 0L;
         if ( (hasStarted) && (endTime != 0L) ) {
@@ -403,7 +410,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
             runTimeTextView.text = String.format(getString(R.string.runTimeLabel), runTime)
 
-            endTimeTextView.text = String.format(getString(R.string.endTimeLabel), endTime)
+            endTimeTextView.text = String.format(getString(R.string.endTimeLabel), endTime, highestEnd)
             runTimeTextView.text = String.format(getString(R.string.runTimeLabel), runTime)
 
             refreshScaleSpeed()
@@ -415,6 +422,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             speedTextView.text = ""
         }
         ratioTextView.text = String.format(getString(R.string.ratioLabel), ratio)
+
+        highestXZY = 0F
 
     }
 
