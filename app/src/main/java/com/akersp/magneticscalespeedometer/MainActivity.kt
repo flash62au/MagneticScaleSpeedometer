@@ -214,6 +214,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         lastYValues.clear() // Clear the history
         lastZValues.clear() // Clear the history
 
+        highestXZY = 0F
+
         threshold = thresholdValueEditText.getText().toString().toFloat()
 
         haveSeenFirstResponse = false
@@ -358,6 +360,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                         haveSeenFirstResponse = true
                         hasStarted = false
                         hasDroppedBelowThreshold = false
+                        highestXZY = 0F
                         hideKeyboard()
                         return
                     }
@@ -388,6 +391,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         if (hasFinished) return
 
         hideKeyboard()
+
+        highestXZY = 0F
 
         startTimeTextView.text = String.format(getString(R.string.startTimeLabel), startTime)
 
