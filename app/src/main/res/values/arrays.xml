@@ -204,7 +204,7 @@
         <item>0.003333333</item>
     </string-array>
 
-    <string-array name="unitNames" translatable="false">
+    <string-array name="unitNames">
         <item>Metric (kph)</item>
         <item>Imperial (mph)</item>
     </string-array>
@@ -213,7 +213,12 @@
         <item>0.621371</item>
     </string-array>
 
-    <string-array name="axisNames" translatable="false">
+    <string-array name="axisNames">
+        <item>X Axis</item>
+        <item>Y Axis</item>
+        <item>Z Axis</item>
+    </string-array>
+    <string-array name="axisValues" translatable="false">
         <item>X</item>
         <item>Y</item>
         <item>Z</item>

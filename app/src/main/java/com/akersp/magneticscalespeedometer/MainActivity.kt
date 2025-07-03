@@ -2,6 +2,7 @@ package com.akersp.magneticscalespeedometer
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -20,6 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
+import kotlin.math.round
 
 class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnItemSelectedListener {
     // Add these at the top of your MainActivity class, with other properties
@@ -27,6 +29,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private val KEY_SELECTED_SCALE_POSITION = "selectedScale"
     private val KEY_SELECTED_DISTANCE = "distance"
     private val KEY_SELECTED_AXIS = "axis"
+    private val KEY_THRESHOLD = "threshold"
+    private val KEY_OFFSET = "offset"
+    private lateinit var sharedPref: SharedPreferences
 
     private lateinit var sensorManager: SensorManager
     private var magnetometer: Sensor? = null
@@ -38,17 +43,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private lateinit var zAxisTextView: TextView
     private lateinit var highestValueTextView: TextView
 
+    private lateinit var thresholdButton: Button
     private lateinit var thresholdValueEditText: EditText
     private var threshold: Float = 50F
+
+    private lateinit var offsetValueEditText: EditText
+    private var offset: Float = 40F
 
     private lateinit var ignoreFirstResponseCheckBox: CheckBox
     private var ignoreFirstResponse: Boolean = false
     private var haveSeenFirstResponse: Boolean = false
 
     private var highestXZY: Float = 0F
-    private val lastXValues = mutableListOf<Float>() // List to store last 10 X values
     private val maxHistorySize = 10 // Maximum number of values to store
-
+    private val lastXValues = mutableListOf<Float>() // List to store last 10 X values
     private val lastYValues = mutableListOf<Float>() // List to store last 10 Y values
     private val lastZValues = mutableListOf<Float>() // List to store last 10 Z values
 
@@ -88,7 +96,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         xAxisTextView = findViewById(R.id.xAxisValue)
         yAxisTextView = findViewById(R.id.yAxisValue)
@@ -123,7 +131,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         // *****************************
 
+        threshold = sharedPref.getFloat(KEY_THRESHOLD, 50F)
         thresholdValueEditText = findViewById(R.id.thresholdValue)
+        thresholdValueEditText.setText(threshold.toString())
+        // Set up the click listener for the threshold button
+        thresholdButton = findViewById(R.id.thresholdButton) // Initialize the threshold button
+        thresholdButton.setOnClickListener {
+            setThresholdFromCurrent()
+        }
+
+        // *****************************
+
+        offset = sharedPref.getFloat(KEY_OFFSET, 40F)
+        offsetValueEditText = findViewById(R.id.offsetValue)
+        offsetValueEditText.setText(offset.toString())
 
         // *****************************
 
@@ -208,6 +229,43 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         sensorManager.unregisterListener(this)
     }
 
+    private fun setThresholdFromCurrent() {
+        offset = offsetValueEditText.getText().toString().toFloat()
+
+        if (selectedAxis == 0) { // X
+            if (lastXValues.isNotEmpty()) {
+                threshold = lastXValues[lastXValues.size-1]
+            }
+        } else if (selectedAxis == 1) { // Y
+            if (lastYValues.isNotEmpty()) {
+                threshold = lastYValues[lastYValues.size-1]
+            }
+        } else if (selectedAxis == 2) { // Z
+            if (lastZValues.isNotEmpty()) {
+                threshold = lastZValues[lastZValues.size-1]
+            }
+        }
+        if (threshold >= 0) {
+            threshold = round(threshold + offset)
+        } else {
+            threshold = round(threshold - offset)
+        }
+        threshold = abs(threshold)
+
+        thresholdValueEditText.setText(threshold.toInt().toString())
+
+        with(sharedPref.edit()) {
+            putFloat(KEY_THRESHOLD, threshold)
+            apply()
+        }
+
+        with(sharedPref.edit()) {
+            putFloat(KEY_OFFSET, offset)
+            apply()
+        }
+        hideKeyboard()
+    }
+
     private fun resetSensorReadings() {
         startTime = 0L
         endTime = 0L
@@ -223,7 +281,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         highestXZY = 0F
 
         threshold = thresholdValueEditText.getText().toString().toFloat()
-
+        with(sharedPref.edit()) {
+            putFloat(KEY_THRESHOLD, threshold)
+            apply()
+        }
         haveSeenFirstResponse = false
         ignoreFirstResponse = ignoreFirstResponseCheckBox.isChecked
         ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -244,7 +305,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // Handle potential NumberFormatException
         try {
             distance = distanceString.toFloat()
-            val sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
                 putFloat(KEY_SELECTED_DISTANCE, distance)
                 apply()
@@ -445,7 +505,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         if (parent?.id == R.id.axisList) { // Check if it's the correct spinner
             selectedAxis = position
 
-            val sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+//            val sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
                 putInt(KEY_SELECTED_AXIS, position)
                 apply()
@@ -462,7 +522,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             ratioTextView.text = String.format(getString(R.string.ratioLabel), ratio)
             refreshScaleSpeed()
 
-            val sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
                 putInt(KEY_SELECTED_SCALE_POSITION, position)
                 apply()

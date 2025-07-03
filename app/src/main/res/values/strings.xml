@@ -8,7 +8,9 @@
     <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.2f μT)</string>
     <string name="zAxisValueLabel">Z: %.2f μT  (avg: %.2f μT)</string>
     <string name="highestValueLabel">highest: %.2f μT</string>
+
     <string name="resetButtonLabel">Reset</string>
+    <string name="thresholdButtonLabel">Get</string>
 
     <string name="startTimeLabel">Start: %d ms (%.2f μT)</string>
     <string name="endTimeLabel">End: %d ms (%.2f μT)</string>
@@ -28,6 +30,9 @@
 
     <string name="thresholdLabel">Threshold: </string>
     <string name="thresholdDefaultValue">50</string>
+
+    <string name="offsetLabel"> Get +: </string>
+    <string name="offsetDefaultValue">40</string>
 
     <string name="scaleLabel">Scale: </string>
     <string name="axisLabel">Axis: </string>

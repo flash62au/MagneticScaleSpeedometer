@@ -29,9 +29,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
+                android:gravity="start"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginTop="20dip"
-                android:layout_marginBottom="6dp" >
+                android:layout_marginBottom="0dp" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -55,14 +57,15 @@
 
 
             <LinearLayout
+                android:layout_height="40dip"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="6dp" >
+                android:gravity="start|center_vertical"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="0dp" >
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
@@ -71,7 +74,7 @@
                 <EditText
                     android:id="@+id/distanceValue"
                     android:text="@string/distanceDefaultValue"
-                    android:layout_width="80sp"
+                    android:layout_width="50sp"
                     android:layout_height="wrap_content"
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
@@ -83,14 +86,15 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dip"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="6dp" >
+                android:gravity="start|center_vertical"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="0dp" >
 
                 <TextView
                     android:id="@+id/thresholdLabel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/thresholdLabel"
                     android:textSize="14sp"
@@ -99,22 +103,54 @@
                 <EditText
                     android:id="@+id/thresholdValue"
                     android:text="@string/thresholdDefaultValue"
-                    android:layout_width="80sp"
+                    android:layout_width="50sp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:inputType="number"
+                    android:digits="0123456789."/>
+
+                <Button
+                    android:textAllCaps="false"
+                    android:id="@+id/thresholdButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dip"
+                    android:layout_marginEnd="30dip"
+                    android:padding="0dp"
+                    android:text="@string/thresholdButtonLabel" />
+
+                <TextView
+                    android:id="@+id/offsetLabel"
+                    android:layout_width="wrap_content"
+                    android:gravity="end"
+                    android:layout_height="wrap_content"
+                    android:text="@string/offsetLabel"
+                    android:textSize="14sp"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/offsetValue"
+                    android:text="@string/offsetDefaultValue"
+                    android:layout_width="50sp"
                     android:layout_height="wrap_content"
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
                     android:textSize="16sp"
                     android:inputType="number"
-                    android:digits="0123456789"/>
+                    android:digits="0123456789."/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dip"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="6dp" >
+                android:gravity="start|center_vertical"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="0dp" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -130,16 +166,8 @@
                     android:ellipsize="none"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:text="" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="6dp" >
+                    android:text=""
+                    android:layout_marginEnd="10dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -155,12 +183,21 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/resetButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dip"
-                android:text="@string/resetButtonLabel" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="6dip" >
+
+                <Button
+                        android:id="@+id/resetButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="0dip"
+                        android:text="@string/resetButtonLabel" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/sensorLabel"
