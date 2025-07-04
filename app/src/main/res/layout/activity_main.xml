@@ -40,7 +40,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:text="@string/scaleLabel" />
+                    android:text="@string/scaleLabel"
+                    android:layout_marginEnd="5dp" />
 
 
                 <Spinner
@@ -69,7 +70,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:text="@string/distanceLabel" />
+                    android:text="@string/distanceLabel"
+                    android:layout_marginEnd="5dp" />
 
                 <EditText
                     android:id="@+id/distanceValue"
@@ -90,14 +92,87 @@
                 android:orientation="horizontal"
                 android:gravity="start|center_vertical"
                 android:layout_marginStart="4dp"
+                android:layout_marginBottom="0dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/ambientXLabel"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ambientXLabel"
+                    android:textSize="14sp"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/ambientXValue"
+                    android:text=""
+                    android:layout_width="50sp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:inputType="number"
+                    android:digits="-0123456789."/>
+
+                <TextView
+                    android:id="@+id/ambientYLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ambientYLabel"
+                    android:textSize="14sp"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/ambientYValue"
+                    android:text=""
+                    android:layout_width="50sp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:inputType="number"
+                    android:digits="-0123456789."/>
+
+                <TextView
+                    android:id="@+id/ambientZLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ambientZLabel"
+                    android:textSize="14sp"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/ambientZValue"
+                    android:text=""
+                    android:layout_width="50sp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:inputType="number"
+                    android:digits="-0123456789."/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dip"
+                android:orientation="horizontal"
+                android:gravity="start|center_vertical"
+                android:layout_marginStart="4dp"
                 android:layout_marginBottom="0dp" >
 
                 <TextView
                     android:id="@+id/thresholdLabel"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/thresholdLabel"
                     android:textSize="14sp"
+                    android:layout_marginEnd="5dp"
                     android:textColor="@color/white" />
 
                 <EditText
@@ -108,36 +183,6 @@
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
                     android:layout_marginEnd="10dp"
-                    android:textSize="16sp"
-                    android:inputType="number"
-                    android:digits="0123456789."/>
-
-                <Button
-                    android:textAllCaps="false"
-                    android:id="@+id/thresholdButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="0dip"
-                    android:layout_marginEnd="30dip"
-                    android:padding="0dp"
-                    android:text="@string/thresholdButtonLabel" />
-
-                <TextView
-                    android:id="@+id/offsetLabel"
-                    android:layout_width="wrap_content"
-                    android:gravity="end"
-                    android:layout_height="wrap_content"
-                    android:text="@string/offsetLabel"
-                    android:textSize="14sp"
-                    android:textColor="@color/white" />
-
-                <EditText
-                    android:id="@+id/offsetValue"
-                    android:text="@string/offsetDefaultValue"
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
                     android:textSize="16sp"
                     android:inputType="number"
                     android:digits="0123456789."/>
@@ -157,7 +202,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:text="@string/axisLabel" />
+                    android:text="@string/axisLabel"
+                    android:layout_marginEnd="5dp"  />
 
                 <Spinner
                     android:id="@+id/axisList"
@@ -174,7 +220,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:text="@string/ignoreFirstResponseLabel" />
+                    android:text="@string/ignoreFirstResponseLabel"
+                    android:layout_marginEnd="5dp"  />
 
                 <CheckBox
                     android:id="@+id/ignoreFirstResponse"

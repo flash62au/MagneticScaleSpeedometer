@@ -20,7 +20,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.math.abs
 import kotlin.math.round
 
 class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnItemSelectedListener {
@@ -30,7 +29,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private val KEY_SELECTED_DISTANCE = "distance"
     private val KEY_SELECTED_AXIS = "axis"
     private val KEY_THRESHOLD = "threshold"
-    private val KEY_OFFSET = "offset"
+
+    private val INDEX_X = 0
+    private val INDEX_Y = 1
+    private val INDEX_Z = 2
+
+    private val INCREASING = 1
+    private val DECREASING = -1
+    private val STEADY = 0
+
     private lateinit var sharedPref: SharedPreferences
 
     private lateinit var sensorManager: SensorManager
@@ -43,22 +50,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private lateinit var zAxisTextView: TextView
     private lateinit var highestValueTextView: TextView
 
-    private lateinit var thresholdButton: Button
+    private val thresholdLowValues: Array<Float> = arrayOf(0F, 0F, 0F)
+    private val thresholdHighValues: Array<Float> = arrayOf(0F, 0F, 0F)
+
     private lateinit var thresholdValueEditText: EditText
     private var threshold: Float = 50F
-
-    private lateinit var offsetValueEditText: EditText
-    private var offset: Float = 40F
+    
+    private val ambientValues: Array<Float> = arrayOf(0F, 0F, 0F)
+    private lateinit var ambientValuesEditText: Array<EditText>
+    private var isAmbientInitialised:Boolean = false
 
     private lateinit var ignoreFirstResponseCheckBox: CheckBox
     private var ignoreFirstResponse: Boolean = false
     private var haveSeenFirstResponse: Boolean = false
 
-    private var highestXZY: Float = 0F
-    private val maxHistorySize = 10 // Maximum number of values to store
+    private var highestXYZ: Float = 0F
+    private val maxHistorySize = 20 // Maximum number of values to store
     private val lastXValues = mutableListOf<Float>() // List to store last 10 X values
     private val lastYValues = mutableListOf<Float>() // List to store last 10 Y values
     private val lastZValues = mutableListOf<Float>() // List to store last 10 Z values
+    private val averageValues: Array<Float> = arrayOf(0F, 0F, 0F)
+    private val increasingOrDecreasing: Array<Int> = arrayOf(0, 0, 0)
+    private var wasIncreasingOrDecreasingWhenEventStarted: Int = 0
 
     private lateinit var startTimeTextView: TextView
     private lateinit var endTimeTextView: TextView
@@ -133,18 +146,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         threshold = sharedPref.getFloat(KEY_THRESHOLD, 50F)
         thresholdValueEditText = findViewById(R.id.thresholdValue)
-        thresholdValueEditText.setText(threshold.toString())
-        // Set up the click listener for the threshold button
-        thresholdButton = findViewById(R.id.thresholdButton) // Initialize the threshold button
-        thresholdButton.setOnClickListener {
-            setThresholdFromCurrent()
-        }
+        thresholdValueEditText.setText(String.format("%.0f",threshold))
 
         // *****************************
 
-        offset = sharedPref.getFloat(KEY_OFFSET, 40F)
-        offsetValueEditText = findViewById(R.id.offsetValue)
-        offsetValueEditText.setText(offset.toString())
+        ambientValuesEditText = Array(3) { index ->
+            EditText(this) // Requires context, 'this' is the Activity
+        }
+        ambientValuesEditText[INDEX_X] = findViewById(R.id.ambientXValue)
+        ambientValuesEditText[INDEX_Y] = findViewById(R.id.ambientYValue)
+        ambientValuesEditText[INDEX_Z] = findViewById(R.id.ambientZValue)
+        setAmbientFromCurrent()
 
         // *****************************
 
@@ -229,40 +241,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         sensorManager.unregisterListener(this)
     }
 
-    private fun setThresholdFromCurrent() {
-        offset = offsetValueEditText.getText().toString().toFloat()
-
-        if (selectedAxis == 0) { // X
-            if (lastXValues.isNotEmpty()) {
-                threshold = lastXValues[lastXValues.size-1]
-            }
-        } else if (selectedAxis == 1) { // Y
-            if (lastYValues.isNotEmpty()) {
-                threshold = lastYValues[lastYValues.size-1]
-            }
-        } else if (selectedAxis == 2) { // Z
-            if (lastZValues.isNotEmpty()) {
-                threshold = lastZValues[lastZValues.size-1]
-            }
-        }
-        if (threshold >= 0) {
-            threshold = round(threshold + offset)
-        } else {
-            threshold = round(threshold - offset)
-        }
-        threshold = abs(threshold)
-
-        thresholdValueEditText.setText(threshold.toInt().toString())
-
+    private fun setAmbientFromCurrent() {
+        threshold = thresholdValueEditText.getText().toString().toFloat()
         with(sharedPref.edit()) {
             putFloat(KEY_THRESHOLD, threshold)
             apply()
         }
 
-        with(sharedPref.edit()) {
-            putFloat(KEY_OFFSET, offset)
-            apply()
+        for (i in 0 until ambientValues.size) {
+//            ambientValues[i] = round(averageValues[i])
+            ambientValues[i] = averageValues[i]
+            ambientValuesEditText[i].setText(String.format("%.2f",ambientValues[i]))
+
+            thresholdLowValues[i] = ambientValues[i] - threshold
+            thresholdHighValues[i] = ambientValues[i] + threshold
         }
+
         hideKeyboard()
     }
 
@@ -274,17 +268,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         hasStarted = false
         hasFinished = false
         hasDroppedBelowThreshold = true
+        wasIncreasingOrDecreasingWhenEventStarted = STEADY
         lastXValues.clear() // Clear the history
         lastYValues.clear() // Clear the history
         lastZValues.clear() // Clear the history
 
-        highestXZY = 0F
+        highestXYZ = 0F
 
         threshold = thresholdValueEditText.getText().toString().toFloat()
         with(sharedPref.edit()) {
             putFloat(KEY_THRESHOLD, threshold)
             apply()
         }
+
         haveSeenFirstResponse = false
         ignoreFirstResponse = ignoreFirstResponseCheckBox.isChecked
         ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -315,31 +311,57 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             // Handle the case where the input is not a valid number
             distanceEditText.error = "Invalid number"
         }
-
+        setAmbientFromCurrent()
         hideKeyboard()
+    }
+
+    private fun setAverageValues(index:Int ) {
+        when (index) {
+            INDEX_X -> averageValues[index] = lastXValues.average().toFloat()
+            INDEX_Y -> averageValues[index] = lastYValues.average().toFloat()
+            INDEX_Z -> averageValues[index] = lastZValues.average().toFloat()
+        }
+
+        increasingOrDecreasing[index] = STEADY
+        if ( (averageValues[index] > thresholdLowValues[index]) && (averageValues[index] < thresholdHighValues[index]) ) {
+            increasingOrDecreasing[index] = STEADY
+        } else if (averageValues[index] < ambientValues[index]) {
+            increasingOrDecreasing[index] = DECREASING
+        } else if (averageValues[index] > ambientValues[index]) {
+            increasingOrDecreasing[index] = INCREASING
+        }
     }
 
     private fun addXValueToHistory(value: Float) {
         if (lastXValues.size >= maxHistorySize) {
             lastXValues.removeAt(0) // Remove the oldest value if the list is full
+
+            if (!isAmbientInitialised) {
+                setAmbientFromCurrent()
+                isAmbientInitialised = true
+            }
         }
         lastXValues.add(value) // Add the new value
-    }
 
+        setAverageValues(INDEX_X)
+    }
 
     private fun addYValueToHistory(value: Float) {
         if (lastYValues.size >= maxHistorySize) {
             lastYValues.removeAt(0) // Remove the oldest value if the list is full
         }
         lastYValues.add(value) // Add the new value
-    }
 
+        setAverageValues(INDEX_Y)
+    }
 
     private fun addZValueToHistory(value: Float) {
         if (lastZValues.size >= maxHistorySize) {
             lastZValues.removeAt(0) // Remove the oldest value if the list is full
         }
         lastZValues.add(value) // Add the new value
+
+        setAverageValues(INDEX_Z)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -350,40 +372,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
             // Get the magnetic field values for each axis
-            val xAxis = event.values[0]
-            val yAxis = event.values[1]
-            val zAxis = event.values[2]
 
-            val averageX = lastXValues.average().toFloat()
-            val averageY = lastYValues.average().toFloat()
-            val averageZ = lastZValues.average().toFloat()
 
             // Update the TextViews with the new values
-            xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), xAxis, averageX)
-            yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), yAxis, averageY)
-            zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel), zAxis, averageZ)
-            highestValueTextView.text = String.format(getString(R.string.highestValueLabel), highestXZY)
+            xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), event.values[INDEX_X], averageValues[INDEX_X], ambientValues[INDEX_X])
+            yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), event.values[INDEX_Y], averageValues[INDEX_Y], ambientValues[INDEX_Y])
+            zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel), event.values[INDEX_Z], averageValues[INDEX_Z], ambientValues[INDEX_Z])
+            highestValueTextView.text = String.format(getString(R.string.highestValueLabel), highestXYZ)
 
-            val absX = abs(xAxis)
-            val absY = abs(yAxis)
-            val absZ = abs(zAxis)
-
-            addXValueToHistory(absX)
-            addYValueToHistory(absY)
-            addZValueToHistory(absZ)
+            addXValueToHistory(event.values[INDEX_X])
+            addYValueToHistory(event.values[INDEX_Y])
+            addZValueToHistory(event.values[INDEX_Z])
 
 //            Log.d("Magnetic Scale Speedometer", "onSensorChanged(): xAxis: $xAxis")
 
-            var absXYZ = absX
-            if (selectedAxis == 0) { // X
-                absXYZ = absX
-            } else if (selectedAxis == 1) { // Y
-                absXYZ = absY
-            } else if (selectedAxis == 2) { // Z
-                absXYZ = absZ
+            var axisXYZ = event.values[selectedAxis]
+            var thresholdLow = thresholdLowValues[selectedAxis]
+            var thresholdHigh = thresholdHighValues[selectedAxis]
+            var isIncreasing = increasingOrDecreasing[selectedAxis] == INCREASING
+            var isDecreasing = increasingOrDecreasing[selectedAxis] == DECREASING
+
+            if (isIncreasing) {
+                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): is Increasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
+            } else if (isDecreasing) {
+                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): is Decreasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
             }
 
-            if (absXYZ < threshold) {
+            if (axisXYZ < thresholdLow || axisXYZ > thresholdHigh) {
 //                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Below threshold - Ignore")
                 hasDroppedBelowThreshold = true
                 return
@@ -394,65 +409,69 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 return
             }
 
-            if (absXYZ > highestXZY) {
-                highestXZY = absXYZ
-            } else if (absXYZ < highestXZY) {
-                // count how many times the value has decreased
-                var count = 0
-                if (selectedAxis == 0) { // X
-                    for (value in lastXValues) {
-                        if (value < absXYZ) {
-                            count++
-                        }
+            var triggerNow = false
+            if (isIncreasing) {
+                if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) { // something started
+                    wasIncreasingOrDecreasingWhenEventStarted = INCREASING
+                    highestXYZ = axisXYZ
+                } else if (wasIncreasingOrDecreasingWhenEventStarted == INCREASING) {  // continuing above threshold
+                    if (axisXYZ >= highestXYZ) {
+                        highestXYZ = axisXYZ
+                    } else {
+                        triggerNow = true
                     }
-                } else if (selectedAxis == 1) { // Y
-                    for (value in lastYValues) {
-                        if (value < absXYZ) {
-                            count++
-                        }
-                    }
-                } else if (selectedAxis == 2) { // Z
-                    for (value in lastZValues) {
-                        if (value < absXYZ) {
-                            count++
-                        }
-                    }
+                } else { // it has now started but now it is below threshold - should not happen
+                    triggerNow = true
                 }
-
-                if (count > 3) {
-
-                    if ( (ignoreFirstResponse) && (!haveSeenFirstResponse) ) {
-                        Toast.makeText(this, getString(R.string.ignoreFirstResponseNotice), Toast.LENGTH_SHORT).show()
-                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ignoring first response")
-                        haveSeenFirstResponse = true
-                        hasStarted = false
-                        hasDroppedBelowThreshold = false
-                        highestXZY = 0F
-                        hideKeyboard()
-                        return
+            } else if (isDecreasing) {
+                if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) {  // STEADY or DECREASING
+                    wasIncreasingOrDecreasingWhenEventStarted = DECREASING
+                    highestXYZ = axisXYZ
+                } else if (wasIncreasingOrDecreasingWhenEventStarted == DECREASING) {  // continuing below threshold
+                    if (axisXYZ <= highestXYZ) {
+                        highestXYZ = axisXYZ
+                    } else {
+                        triggerNow = true
                     }
-
-                    if (!hasStarted) {  // starting
-                        Toast.makeText(this, getString(R.string.startedNotice), Toast.LENGTH_SHORT).show()
-                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Started")
-                        startTime = System.currentTimeMillis()
-                        highestStart = highestXZY
-                        hasStarted = true
-                        hasDroppedBelowThreshold = false
-                        startOrEndTimeHasChanged()
-                        return
-                    }
-
-                    if (!hasFinished) {
-                        Toast.makeText(this, getString(R.string.endedNotice), Toast.LENGTH_SHORT).show()
-                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ended")
-                        highestEnd = highestXZY
-                        endTime = System.currentTimeMillis()
-                        startOrEndTimeHasChanged()
-                        return
-                    }
+                } else { // it has now started but now it is above threshold - should not happen
+                    triggerNow = true
                 }
             }
+
+            if (triggerNow) {
+
+                if ( (ignoreFirstResponse) && (!haveSeenFirstResponse) ) {
+                    Toast.makeText(this, getString(R.string.ignoreFirstResponseNotice), Toast.LENGTH_SHORT).show()
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ignoring first response")
+                    haveSeenFirstResponse = true
+                    hasStarted = false
+                    hasDroppedBelowThreshold = false
+                    highestXYZ = 0F
+                    hideKeyboard()
+                    return
+                }
+
+                if (!hasStarted) {  // starting
+                    Toast.makeText(this, getString(R.string.startedNotice), Toast.LENGTH_SHORT).show()
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Started")
+                    startTime = System.currentTimeMillis()
+                    highestStart = highestXYZ
+                    hasStarted = true
+                    hasDroppedBelowThreshold = false
+                    startOrEndTimeHasChanged()
+                    return
+                }
+
+                if (!hasFinished) {
+                    Toast.makeText(this, getString(R.string.endedNotice), Toast.LENGTH_SHORT).show()
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ended")
+                    highestEnd = highestXYZ
+                    endTime = System.currentTimeMillis()
+                    startOrEndTimeHasChanged()
+                    return
+                }
+            }
+
         }
     }
 
@@ -483,7 +502,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         }
         ratioTextView.text = String.format(getString(R.string.ratioLabel), ratio)
 
-        highestXZY = 0F
+        highestXYZ = 0F
 
     }
 

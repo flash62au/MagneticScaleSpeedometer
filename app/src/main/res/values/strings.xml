@@ -4,13 +4,12 @@
     <string name="warningNotAvailable">Magnetometer not available</string>
 
     <string name="sensorLabel">Magnetic Field Sensor Data:</string>
-    <string name="xAxisValueLabel">X: %.2f μT  (avg: %.2f μT)</string>
-    <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.2f μT)</string>
-    <string name="zAxisValueLabel">Z: %.2f μT  (avg: %.2f μT)</string>
+    <string name="xAxisValueLabel">X: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
+    <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
+    <string name="zAxisValueLabel">Z: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
     <string name="highestValueLabel">highest: %.2f μT</string>
 
     <string name="resetButtonLabel">Reset</string>
-    <string name="thresholdButtonLabel">Get</string>
 
     <string name="startTimeLabel">Start: %d ms (%.2f μT)</string>
     <string name="endTimeLabel">End: %d ms (%.2f μT)</string>
@@ -25,11 +24,15 @@
     <string name="distanceLabel">Distance (cm): </string>
     <string name="distanceDefaultValue">10</string>
 
-    <string name="ignoreFirstResponseLabel">Ignore first response (loco): </string>
+    <string name="ignoreFirstResponseLabel">Ignore first (loco): </string>
     <string name="ignoreFirstResponseNotice">Ignoring first response (loco)</string>
 
-    <string name="thresholdLabel">Threshold: </string>
+    <string name="thresholdLabel">Threshold (±Ambient): </string>
     <string name="thresholdDefaultValue">50</string>
+
+    <string name="ambientXLabel">Ambient X: </string>
+    <string name="ambientYLabel">Y: </string>
+    <string name="ambientZLabel">Z: </string>
 
     <string name="offsetLabel"> Get +: </string>
     <string name="offsetDefaultValue">40</string>
