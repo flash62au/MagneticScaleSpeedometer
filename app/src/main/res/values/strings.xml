@@ -38,5 +38,7 @@
 
     <string name="scaleLabel">Scale: </string>
     <string name="axisLabel">Axis: </string>
-    <!--    <string name=""></string>-->
+
+    <string name="restartCountdownLabel">Restarting in %d sec</string>
+    <string name="restartInLabel">Restart (sec): </string>
 </resources>

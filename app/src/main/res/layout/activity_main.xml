@@ -187,6 +187,27 @@
                     android:inputType="number"
                     android:digits="0123456789."/>
 
+                <TextView
+                    android:id="@+id/restartInLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/restartInLabel"
+                    android:textSize="14sp"
+                    android:layout_marginEnd="5dp"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/restartInValue"
+                    android:text="@string/thresholdDefaultValue"
+                    android:layout_width="50sp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:inputType="number"
+                    android:digits="0123456789"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -326,6 +347,15 @@
                 android:text="@string/speedLabel"
                 android:textColor="@color/white"
                 android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/restartCountdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="@string/restartCountdownLabel"
+                android:textColor="@color/offWhite"
+                android:textSize="12sp"/>
 
         </LinearLayout>
     </ScrollView>

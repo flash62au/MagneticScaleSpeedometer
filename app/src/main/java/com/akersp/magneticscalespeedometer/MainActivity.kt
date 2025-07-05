@@ -8,6 +8,8 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private val KEY_SELECTED_DISTANCE = "distance"
     private val KEY_SELECTED_AXIS = "axis"
     private val KEY_THRESHOLD = "threshold"
+    private val KEY_RESTART_IN = "restartIn"
 
     private val INDEX_X = 0
     private val INDEX_Y = 1
@@ -104,6 +107,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private var scaleSpeedKph: Float = 0F
     private var scaleSpeedMph: Float = 0F
 
+    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var timedRestartRunnable: Runnable
+    private val RESTART_INTERVAL = 1000L
+    private var restartInValue = 5L
+    private var restartCountDown = 10L //seconds
+    private lateinit var restartTimerTextView: TextView
+    private lateinit var restartInEditText: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -136,7 +147,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // Set up the click listener for the reset button
         resetButton = findViewById(R.id.resetButton) // Initialize the reset button
         resetButton.setOnClickListener {
-            resetSensorReadings()
+            resetSensorReadings(true)
         }
 
         // *****************************
@@ -221,7 +232,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         // *****************************
 
-        resetSensorReadings()
+        restartInValue = sharedPref.getLong(KEY_RESTART_IN, 10L) // Default to 10 if not found
+        restartInEditText = findViewById<EditText>(R.id.restartInValue)
+        restartInEditText.setText(restartInValue.toString()) // Set the text in the EditText
+
+        restartTimerTextView = findViewById(R.id.restartCountdown)
+        restartTimerTextView.text = ""
+        timedRestartRunnable = Runnable {
+            if (hasFinished) {
+                restartCountDown--
+                restartTimerTextView.text = getString(R.string.restartCountdownLabel, restartCountDown)
+                Log.d("Magnetic Scale Speedometer", "Timer fired - resetting sensor readings  $restartCountDown")
+                if (restartCountDown <=0) {
+                    resetSensorReadings(false)
+                    restartCountDown = restartInValue
+                }
+            } else {
+                restartCountDown = restartInValue
+                restartTimerTextView.text = ""
+            }
+            // Schedule the next execution
+            handler.postDelayed(timedRestartRunnable, RESTART_INTERVAL)
+        }
+
+        // *****************************
+
+        resetSensorReadings(true)
+
     }
 
     override fun onResume() {
@@ -230,12 +267,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         magnetometer?.also { magnet ->
             sensorManager.registerListener(this, magnet, SensorManager.SENSOR_DELAY_FASTEST)
         }
+        handler.postDelayed(timedRestartRunnable, RESTART_INTERVAL)
     }
 
     override fun onPause() {
         super.onPause()
         // Unregister the sensor listener when the activity is paused to save battery
         sensorManager.unregisterListener(this)
+        handler.removeCallbacks(timedRestartRunnable)
     }
 
     private fun setAmbientFromCurrent() {
@@ -257,7 +296,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         hideKeyboard()
     }
 
-    private fun resetSensorReadings() {
+    private fun resetSensorReadings(isFullReset: Boolean) {
         startTime = 0L
         endTime = 0L
         runTime = 0L
@@ -308,7 +347,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             // Handle the case where the input is not a valid number
             distanceEditText.error = "Invalid number"
         }
-        setAmbientFromCurrent()
+
+        restartInValue = restartInEditText.getText().toString().toLong()
+        with(sharedPref.edit()) {
+            putLong(KEY_RESTART_IN, restartInValue)
+            apply()
+        }
+
+        if (isFullReset) setAmbientFromCurrent()
         hideKeyboard()
     }
 
