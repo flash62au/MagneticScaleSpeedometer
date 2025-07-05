@@ -229,6 +229,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         ignoreFirstResponseCheckBox = findViewById(R.id.ignoreFirstResponse)
         ignoreFirstResponseCheckBox.isChecked = true
+        ignoreFirstResponse = true
+        ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            Log.d("Magnetic Scale Speedometer", "ignoreFirstResponseCheckBox changed: $isChecked")
+            ignoreFirstResponse = isChecked
+        }
 
         // *****************************
 
