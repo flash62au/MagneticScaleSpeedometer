@@ -283,15 +283,6 @@
                 android:textSize="12sp"/>
 
             <TextView
-                android:id="@+id/highestValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dip"
-                android:text="@string/highestValueLabel"
-                android:textColor="@color/white"
-                android:textSize="12sp"/>
-
-            <TextView
                 android:id="@+id/startTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -7,7 +7,6 @@
     <string name="xAxisValueLabel">X: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
     <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
     <string name="zAxisValueLabel">Z: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
-    <string name="highestValueLabel">highest: %.2f μT</string>
 
     <string name="resetButtonLabel">Reset</string>
 

@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private lateinit var resetButton: Button
     private lateinit var yAxisTextView: TextView
     private lateinit var zAxisTextView: TextView
-    private lateinit var highestValueTextView: TextView
 
     private val thresholdLowValues: Array<Float> = arrayOf(0F, 0F, 0F)
     private val thresholdHighValues: Array<Float> = arrayOf(0F, 0F, 0F)
@@ -114,7 +113,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         xAxisTextView = findViewById(R.id.xAxisValue)
         yAxisTextView = findViewById(R.id.yAxisValue)
         zAxisTextView = findViewById(R.id.zAxisValue)
-        highestValueTextView = findViewById(R.id.highestValue)
 
         // Get an instance of the SensorManager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -127,7 +125,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             xAxisTextView.text = getString(R.string.warningNotAvailable)
             yAxisTextView.text = ""
             zAxisTextView.text = ""
-            highestValueTextView.text = ""
         }
 
         // *****************************
@@ -378,7 +375,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), event.values[INDEX_X], averageValues[INDEX_X], ambientValues[INDEX_X])
             yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), event.values[INDEX_Y], averageValues[INDEX_Y], ambientValues[INDEX_Y])
             zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel), event.values[INDEX_Z], averageValues[INDEX_Z], ambientValues[INDEX_Z])
-            highestValueTextView.text = String.format(getString(R.string.highestValueLabel), highestXYZ)
 
             addXValueToHistory(event.values[INDEX_X])
             addYValueToHistory(event.values[INDEX_Y])
@@ -398,14 +394,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 Log.d("Magnetic Scale Speedometer", "onSensorChanged(): is Decreasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
             }
 
-            if (axisXYZ < thresholdLow || axisXYZ > thresholdHigh) {
-//                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Below threshold - Ignore")
+            if (axisXYZ >= thresholdLow && axisXYZ <= thresholdHigh) {
+//                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Inside threshold: $axisXYZ - Ignore")
                 hasDroppedBelowThreshold = true
+                highestXYZ = axisXYZ
                 return
             }
 
             if (!hasDroppedBelowThreshold) {
-                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Has not dropped below threshold yet")
+//                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): $axisXYZ - Has not dropped below threshold yet")
                 return
             }
 
@@ -414,27 +411,35 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) { // something started
                     wasIncreasingOrDecreasingWhenEventStarted = INCREASING
                     highestXYZ = axisXYZ
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Started to look")
                 } else if (wasIncreasingOrDecreasingWhenEventStarted == INCREASING) {  // continuing above threshold
                     if (axisXYZ >= highestXYZ) {
                         highestXYZ = axisXYZ
+                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Looking")
                     } else {
                         triggerNow = true
+                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Trigger")
                     }
                 } else { // it has now started but now it is below threshold - should not happen
                     triggerNow = true
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Should not be here")
                 }
             } else if (isDecreasing) {
                 if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) {  // STEADY or DECREASING
                     wasIncreasingOrDecreasingWhenEventStarted = DECREASING
                     highestXYZ = axisXYZ
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - starting to look")
                 } else if (wasIncreasingOrDecreasingWhenEventStarted == DECREASING) {  // continuing below threshold
                     if (axisXYZ <= highestXYZ) {
                         highestXYZ = axisXYZ
+                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - looking")
                     } else {
                         triggerNow = true
+                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Trigger")
                     }
                 } else { // it has now started but now it is above threshold - should not happen
                     triggerNow = true
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Should not be here")
                 }
             }
 
@@ -446,16 +451,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                     haveSeenFirstResponse = true
                     hasStarted = false
                     hasDroppedBelowThreshold = false
-                    highestXYZ = 0F
                     hideKeyboard()
                     return
                 }
 
                 if (!hasStarted) {  // starting
                     Toast.makeText(this, getString(R.string.startedNotice), Toast.LENGTH_SHORT).show()
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Started")
                     startTime = System.currentTimeMillis()
                     highestStart = highestXYZ
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Started: Highest: $highestStart")
+                    highestXYZ = 0F
                     hasStarted = true
                     hasDroppedBelowThreshold = false
                     startOrEndTimeHasChanged()
@@ -464,8 +469,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
                 if (!hasFinished) {
                     Toast.makeText(this, getString(R.string.endedNotice), Toast.LENGTH_SHORT).show()
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ended")
                     highestEnd = highestXYZ
+                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ended: Highest: $highestEnd")
                     endTime = System.currentTimeMillis()
                     startOrEndTimeHasChanged()
                     return

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="005"
-    android:versionName="0.00.005" android:installLocation="auto">
+    android:versionCode="006"
+    android:versionName="0.00.006" android:installLocation="auto">
 
     <application
         android:allowBackup="true"
