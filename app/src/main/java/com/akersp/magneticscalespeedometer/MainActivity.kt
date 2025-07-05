@@ -106,6 +106,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private var speedKmPerHour: Float = 0F
     private var scaleSpeedKph: Float = 0F
     private var scaleSpeedMph: Float = 0F
+    private lateinit var previousSpeedTextView: TextView
+    private var previousScaleSpeedKph: Float = 0F
+    private var previousScaleSpeedMph: Float = 0F
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var timedRestartRunnable: Runnable
@@ -225,10 +228,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // *****************************
 
         ignoreFirstResponseCheckBox = findViewById(R.id.ignoreFirstResponse)
+        ignoreFirstResponseCheckBox.isChecked = true
 
         // *****************************
 
         speedTextView = findViewById(R.id.speed)
+        previousSpeedTextView = findViewById(R.id.previousSpeed)
+        previousSpeedTextView.text = ""
 
         // *****************************
 
@@ -352,6 +358,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         with(sharedPref.edit()) {
             putLong(KEY_RESTART_IN, restartInValue)
             apply()
+        }
+
+        if (previousScaleSpeedKph>0L) {
+            previousSpeedTextView.text = String.format(getString(R.string.previousSpeedLabel), previousScaleSpeedKph, previousScaleSpeedMph)
         }
 
         if (isFullReset) setAmbientFromCurrent()
@@ -545,6 +555,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
             refreshScaleSpeed()
             speedTextView.text = String.format(getString(R.string.speedLabel), scaleSpeedKph, scaleSpeedMph)
+             previousScaleSpeedKph = scaleSpeedKph
+            previousScaleSpeedMph = scaleSpeedMph
 
         } else {
             endTimeTextView.text = ""

@@ -274,7 +274,7 @@
                 android:layout_marginBottom="0dp"
                 android:text="@string/sensorLabel"
                 android:textSize="11sp"
-                android:textColor="@color/white" />
+                android:textColor="@color/offWhite" />
 
             <TextView
                 android:id="@+id/xAxisValue"
@@ -337,22 +337,32 @@
                 android:layout_marginBottom="6dp"
                 android:text="@string/ratioLabel"
                 android:textColor="@color/offWhite"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:layout_marginBottom="6dp"
                 android:text="@string/speedLabel"
                 android:textColor="@color/white"
                 android:textSize="16sp"/>
 
             <TextView
+                android:id="@+id/previousSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@string/previousSpeedLabel"
+                android:textColor="@color/offWhite"
+                android:textSize="12sp"/>
+
+            <TextView
                 android:id="@+id/restartCountdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
                 android:text="@string/restartCountdownLabel"
                 android:textColor="@color/offWhite"
                 android:textSize="12sp"/>
