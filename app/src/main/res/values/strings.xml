@@ -3,6 +3,8 @@
 
     <string name="warningNotAvailable">Magnetometer not available</string>
 
+    <string name="versionLabel">Version: %s</string>
+
     <string name="sensorLabel">Magnetic Field Sensor Data:</string>
     <string name="xAxisValueLabel">X: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
     <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.1f) (amb: %.2f)</string>

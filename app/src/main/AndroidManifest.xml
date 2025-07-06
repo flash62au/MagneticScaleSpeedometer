@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="007"
     android:versionName="0.00.007" android:installLocation="auto">
+    <!--remember to change the version in gradle.build as well-->
 
     <application
         android:allowBackup="true"

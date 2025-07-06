@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,6 +10,31 @@
     android:layout_margin="0dp"
     android:background="@color/black"
     tools:context=".MainActivity">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/grey"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:logo="@mipmap/ic_launcher_round"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/ToolbarTitleTextAppearance" />
+
+
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/versionLabel"
+        android:textColor="@color/offWhite"
+        android:layout_gravity="end"
+        android:layout_margin="0dp"
+        android:textSize="11sp"
+        android:fontFamily="sans-serif-condensed" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,7 +58,7 @@
                 android:gravity="start"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:layout_marginTop="20dip"
+                android:layout_marginTop="10dip"
                 android:layout_marginBottom="0dp" >
 
                 <TextView
@@ -40,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-condensed"
                     android:text="@string/scaleLabel"
                     android:layout_marginEnd="5dp" />
 
@@ -70,6 +97,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-condensed"
                     android:text="@string/distanceLabel"
                     android:layout_marginEnd="5dp" />
 
@@ -172,6 +200,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/thresholdLabel"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-condensed"
                     android:layout_marginEnd="5dp"
                     android:textColor="@color/white" />
 
@@ -193,6 +222,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/restartInLabel"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-condensed"
                     android:layout_marginEnd="5dp"
                     android:textColor="@color/white" />
 
@@ -223,6 +253,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-condensed"
                     android:text="@string/axisLabel"
                     android:layout_marginEnd="5dp"  />
 
@@ -241,6 +272,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-condensed"
                     android:text="@string/ignoreFirstResponseLabel"
                     android:layout_marginEnd="5dp"  />
 

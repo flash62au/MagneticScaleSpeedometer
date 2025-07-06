@@ -27,5 +27,16 @@
         <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
+    <!-- Custom style for the Toolbar Title -->
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">20sp</item> <!-- Set your desired font size here -->
+        <!-- <item name="android:textColor">@color/your_title_color</item> -->
+         <item name="android:fontFamily">sans-serif-condensed-medium</item>
+    </style>
+
+    <style name="CustomToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
+<!--        <item name="subtitleTextAppearance">@style/ToolbarSubtitleTextAppearance</item> &lt;!&ndash; If you use subtitles &ndash;&gt;-->
+    </style>
 
 </resources>

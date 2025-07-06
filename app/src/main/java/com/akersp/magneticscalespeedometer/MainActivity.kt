@@ -3,6 +3,7 @@ package com.akersp.magneticscalespeedometer
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -22,7 +23,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.math.round
+import androidx.appcompat.widget.Toolbar
 
 class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnItemSelectedListener {
     // Add these at the top of your MainActivity class, with other properties
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private var isAmbientInitialised:Boolean = false
 
     private lateinit var ignoreFirstResponseCheckBox: CheckBox
-    private var ignoreFirstResponse: Boolean = false
+    private var ignoreFirstResponse: Boolean = true
     private var haveSeenFirstResponse: Boolean = false
 
     private var highestXYZ: Float = 0F
@@ -122,7 +123,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val toolbar: Toolbar = findViewById(R.id.my_toolbar)
+        setSupportActionBar(toolbar)
+
         sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+        var appVersion: String? = "Unknown"
+        try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            appVersion = packageInfo.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            Log.e("Magnetic Scale Speedometer", "Could not get package info", e) // Consider logging the error
+        }
+        val appVersionTextView = findViewById<TextView>(R.id.version)
+        appVersionTextView.text = getString(R.string.versionLabel, appVersion)
 
         xAxisTextView = findViewById(R.id.xAxisValue)
         yAxisTextView = findViewById(R.id.yAxisValue)
@@ -200,13 +215,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // *****************************
 
         axisSpinner = findViewById(R.id.axisList)
-        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
             this,
             R.array.axisNames, // Your string array resource
             android.R.layout.simple_spinner_item // Default layout for the selected item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
             axisSpinner.adapter = adapter
@@ -219,7 +232,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         // *****************************
 
-        // Find the EditText by its ID
         val savedDistance = sharedPref.getFloat(KEY_SELECTED_DISTANCE, 10F) // Default to 0F if not found
         distance = savedDistance // Update your class member variable
         distanceEditText = findViewById<EditText>(R.id.distanceValue)
@@ -429,9 +441,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
-            // Get the magnetic field values for each axis
-
-
             // Update the TextViews with the new values
             xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), event.values[INDEX_X], averageValues[INDEX_X], ambientValues[INDEX_X])
             yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), event.values[INDEX_Y], averageValues[INDEX_Y], ambientValues[INDEX_Y])
@@ -459,6 +468,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 //                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Inside threshold: $axisXYZ - Ignore")
                 hasDroppedBelowThreshold = true
                 highestXYZ = axisXYZ
+                return
+            }
+
+            if (!isAmbientInitialised) {
+                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ambient not initialised yet")
                 return
             }
 
