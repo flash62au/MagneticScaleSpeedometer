@@ -18,9 +18,11 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/grey"
         android:elevation="4dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:logo="@mipmap/ic_launcher_round"
+        app:logo="@drawable/toolbar_logo_inset"
         app:title="@string/app_name"
         app:titleTextAppearance="@style/ToolbarTitleTextAppearance" />
 

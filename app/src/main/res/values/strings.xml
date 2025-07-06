@@ -44,4 +44,5 @@
 
     <string name="restartCountdownLabel">Restarting in %d sec</string>
     <string name="restartInLabel">Restart (sec): </string>
+    <string name="notRestartingLabel">Not automatically restarting</string>
 </resources>

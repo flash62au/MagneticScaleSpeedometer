@@ -263,13 +263,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         restartTimerTextView.text = ""
         timedRestartRunnable = Runnable {
             if (hasFinished) {
-                restartCountDown--
-                restartTimerTextView.text = getString(R.string.restartCountdownLabel, restartCountDown)
-                Log.d("Magnetic Scale Speedometer", "Timer fired - resetting sensor readings  $restartCountDown")
-                if (restartCountDown <=0) {
-                    resetSensorReadings(false)
-                    restartCountDown = restartInValue
+                if (restartInValue > 0 ) {
+                    restartCountDown--
+                    restartTimerTextView.text = getString(R.string.restartCountdownLabel, restartCountDown)
+                    Log.d(
+                        "Magnetic Scale Speedometer",
+                        "Timer fired - resetting sensor readings  $restartCountDown"
+                    )
+                    if (restartCountDown <= 0) {
+                        resetSensorReadings(false)
+                        restartCountDown = restartInValue
+                    }
+                } else {
+                    restartTimerTextView.text = getString(R.string.notRestartingLabel)
                 }
+
             } else {
                 restartCountDown = restartInValue
                 restartTimerTextView.text = ""

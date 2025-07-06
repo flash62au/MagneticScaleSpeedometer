@@ -29,8 +29,8 @@
 
     <!-- Custom style for the Toolbar Title -->
     <style name="ToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">20sp</item> <!-- Set your desired font size here -->
-        <!-- <item name="android:textColor">@color/your_title_color</item> -->
+        <item name="android:textSize">18sp</item> <!-- Set your desired font size here -->
+         <item name="android:textColor">@color/iconGreen</item>
          <item name="android:fontFamily">sans-serif-condensed-medium</item>
     </style>
 
