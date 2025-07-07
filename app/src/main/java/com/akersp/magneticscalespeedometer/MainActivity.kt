@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private val KEY_SELECTED_AXIS = "axis"
     private val KEY_THRESHOLD = "threshold"
     private val KEY_RESTART_IN = "restartIn"
+    private val KEY_IGNORE_FIRST = "ignoreFirst"
 
     private val INDEX_X = 0
     private val INDEX_Y = 1
@@ -273,13 +274,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         // *****************************
 
+        haveSeenFirstResponse = false
+        val savedIgnoreFirstResponse = sharedPref.getBoolean(KEY_IGNORE_FIRST, true)
         ignoreFirstResponseCheckBox = findViewById(R.id.ignoreFirstResponse)
-        ignoreFirstResponseCheckBox.isChecked = true
-        ignoreFirstResponse = true
+        ignoreFirstResponseCheckBox.isChecked = savedIgnoreFirstResponse
+        ignoreFirstResponse = savedIgnoreFirstResponse
+
         ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 Log.d(APP_NAME, "ignoreFirstResponseCheckBox changed: $isChecked")
                 ignoreFirstResponse = isChecked
                 showLog(getString(R.string.logIgnoreFirstResponseChangedLabel))
+                with(sharedPref.edit()) {
+                    putBoolean(KEY_IGNORE_FIRST, ignoreFirstResponse)
+                    apply()
+                }
         }
 
         // *****************************
@@ -399,12 +407,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         haveSeenFirstResponse = false
         ignoreFirstResponse = ignoreFirstResponseCheckBox.isChecked
-        ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            Log.d(APP_NAME, "onCheckedChangeListener: checked: $isChecked")
-            ignoreFirstResponse = isChecked
-            haveSeenFirstResponse = false
-            showLog(getString(R.string.logIgnoreFirstResponseChangedLabel))
-        }
 
         startTimeTextView.text = ""
         endTimeTextView.text = ""
