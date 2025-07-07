@@ -533,19 +533,25 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel),
                 event.values[INDEX_X],
                 getBelowString(INDEX_X, event.values[INDEX_X]),
+                thresholdLowValues[INDEX_X],
                 ambientValues[INDEX_X],
+                thresholdHighValues[INDEX_X],
                 getAboveString(INDEX_X, event.values[INDEX_X]))
 
             yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel),
                 event.values[INDEX_Y],
                 getBelowString(INDEX_Y, event.values[INDEX_Y]),
+                thresholdLowValues[INDEX_Y],
                 ambientValues[INDEX_Y],
+                thresholdHighValues[INDEX_Y],
                 getAboveString(INDEX_Y, event.values[INDEX_Y]))
 
             zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel),
                 event.values[INDEX_Z],
                 getBelowString(INDEX_Z, event.values[INDEX_Z]),
+                thresholdLowValues[INDEX_Z],
                 ambientValues[INDEX_Z],
+                thresholdHighValues[INDEX_Z],
                 getAboveString(INDEX_Z, event.values[INDEX_Z]))
 
 
