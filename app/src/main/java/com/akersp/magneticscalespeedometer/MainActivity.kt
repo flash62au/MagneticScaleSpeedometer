@@ -2,6 +2,7 @@ package com.akersp.magneticscalespeedometer
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.Sensor
@@ -14,6 +15,8 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
@@ -23,6 +26,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
@@ -361,6 +365,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // Unregister the sensor listener when the activity is paused to save battery
         sensorManager.unregisterListener(this)
         handler.removeCallbacks(timedRestartRunnable)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu) // Replace R.menu.main_menu with your menu file name
+        return true
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_about -> {
+                // Launch AboutActivity
+                val intent = Intent(this, AboutActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setAmbientFromCurrent() {
