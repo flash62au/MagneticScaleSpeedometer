@@ -5,12 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
+    android:gravity="top"
     android:padding="0dp"
     android:layout_margin="0dp"
     android:background="@color/black"
     tools:context=".MainActivity">
-
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -26,7 +25,6 @@
         app:title="@string/app_name"
         app:titleTextAppearance="@style/ToolbarTitleTextAppearance" />
 
-
     <TextView
         android:id="@+id/version"
         android:layout_width="wrap_content"
@@ -38,17 +36,15 @@
         android:textSize="11sp"
         android:fontFamily="sans-serif-condensed" />
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:padding="0dp"
-        android:layout_margin="0dp">
+        android:layout_margin="0dp" >
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:padding="0dp"
             android:layout_margin="0dp">
@@ -56,351 +52,376 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="start"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="0dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:text="@string/scaleLabel"
-                    android:layout_marginEnd="5dp" />
-
-
-                <Spinner
-                    android:id="@+id/scalesList"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="none"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:text="" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_height="40dip"
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:gravity="start|center_vertical"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="0dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:text="@string/distanceLabel"
-                    android:layout_marginEnd="5dp" />
-
-                <EditText
-                    android:id="@+id/distanceValue"
-                    android:text="@string/distanceDefaultValue"
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:textSize="16sp"
-                    android:inputType="number"
-                    android:digits="0123456789."/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dip"
-                android:orientation="horizontal"
-                android:gravity="start|center_vertical"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="0dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/ambientXLabel"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ambientXLabel"
-                    android:textSize="14sp"
-                    android:textColor="@color/white" />
-
-                <EditText
-                    android:id="@+id/ambientXValue"
-                    android:text=""
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:layout_marginEnd="10dp"
-                    android:textSize="16sp"
-                    android:inputType="number"
-                    android:digits="-0123456789."/>
-
-                <TextView
-                    android:id="@+id/ambientYLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ambientYLabel"
-                    android:textSize="14sp"
-                    android:textColor="@color/white" />
-
-                <EditText
-                    android:id="@+id/ambientYValue"
-                    android:text=""
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:layout_marginEnd="10dp"
-                    android:textSize="16sp"
-                    android:inputType="number"
-                    android:digits="-0123456789."/>
-
-                <TextView
-                    android:id="@+id/ambientZLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ambientZLabel"
-                    android:textSize="14sp"
-                    android:textColor="@color/white" />
-
-                <EditText
-                    android:id="@+id/ambientZValue"
-                    android:text=""
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:layout_marginEnd="10dp"
-                    android:textSize="16sp"
-                    android:inputType="number"
-                    android:digits="-0123456789."/>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dip"
-                android:orientation="horizontal"
-                android:gravity="start|center_vertical"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="0dp" >
-
-                <TextView
-                    android:id="@+id/thresholdLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/thresholdLabel"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:layout_marginEnd="5dp"
-                    android:textColor="@color/white" />
-
-                <EditText
-                    android:id="@+id/thresholdValue"
-                    android:text="@string/thresholdDefaultValue"
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:layout_marginEnd="10dp"
-                    android:textSize="16sp"
-                    android:inputType="number"
-                    android:digits="0123456789."/>
-
-                <TextView
-                    android:id="@+id/restartInLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/restartInLabel"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:layout_marginEnd="5dp"
-                    android:textColor="@color/white" />
-
-                <EditText
-                    android:id="@+id/restartInValue"
-                    android:text="@string/thresholdDefaultValue"
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:layout_marginEnd="10dp"
-                    android:textSize="16sp"
-                    android:inputType="number"
-                    android:digits="0123456789"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dip"
-                android:orientation="horizontal"
-                android:gravity="start|center_vertical"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="0dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:text="@string/axisLabel"
-                    android:layout_marginEnd="5dp"  />
-
-                <Spinner
-                    android:id="@+id/axisList"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="none"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:text=""
-                    android:layout_marginEnd="10dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:text="@string/ignoreFirstResponseLabel"
-                    android:layout_marginEnd="5dp"  />
-
-                <CheckBox
-                    android:id="@+id/ignoreFirstResponse"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:layout_marginBottom="6dip" >
+                android:padding="0dp"
+                android:layout_margin="0dp">
 
-                <Button
-                        android:id="@+id/resetButton"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="start"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="0dp" >
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="0dip"
-                        android:text="@string/resetButtonLabel" />
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/scaleLabel"
+                        android:layout_marginEnd="5dp" />
+
+
+                    <Spinner
+                        android:id="@+id/scalesList"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="none"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_height="40dip"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="start|center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="0dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/distanceLabel"
+                        android:layout_marginEnd="5dp" />
+
+                    <EditText
+                        android:id="@+id/distanceValue"
+                        android:text="@string/distanceDefaultValue"
+                        android:layout_width="50sp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:textSize="16sp"
+                        android:inputType="number"
+                        android:digits="0123456789."/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dip"
+                    android:orientation="horizontal"
+                    android:gravity="start|center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="0dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/ambientXLabel"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ambientXLabel"
+                        android:textSize="14sp"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/ambientXValue"
+                        android:text=""
+                        android:layout_width="50sp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="16sp"
+                        android:inputType="number"
+                        android:digits="-0123456789."/>
+
+                    <TextView
+                        android:id="@+id/ambientYLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ambientYLabel"
+                        android:textSize="14sp"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/ambientYValue"
+                        android:text=""
+                        android:layout_width="50sp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="16sp"
+                        android:inputType="number"
+                        android:digits="-0123456789."/>
+
+                    <TextView
+                        android:id="@+id/ambientZLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ambientZLabel"
+                        android:textSize="14sp"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/ambientZValue"
+                        android:text=""
+                        android:layout_width="50sp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="16sp"
+                        android:inputType="number"
+                        android:digits="-0123456789."/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dip"
+                    android:orientation="horizontal"
+                    android:gravity="start|center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="0dp" >
+
+                    <TextView
+                        android:id="@+id/thresholdLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/thresholdLabel"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:layout_marginEnd="5dp"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/thresholdValue"
+                        android:text="@string/thresholdDefaultValue"
+                        android:layout_width="50sp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="16sp"
+                        android:inputType="number"
+                        android:digits="0123456789."/>
+
+                    <TextView
+                        android:id="@+id/restartInLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/restartInLabel"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:layout_marginEnd="5dp"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/restartInValue"
+                        android:text="@string/thresholdDefaultValue"
+                        android:layout_width="50sp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="16sp"
+                        android:inputType="number"
+                        android:digits="0123456789"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dip"
+                    android:orientation="horizontal"
+                    android:gravity="start|center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="0dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/axisLabel"
+                        android:layout_marginEnd="5dp"  />
+
+                    <Spinner
+                        android:id="@+id/axisList"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="none"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text=""
+                        android:layout_marginEnd="10dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/ignoreFirstResponseLabel"
+                        android:layout_marginEnd="5dp"  />
+
+                    <CheckBox
+                        android:id="@+id/ignoreFirstResponse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="6dip" >
+
+                    <Button
+                            android:id="@+id/resetButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="0dip"
+                            android:text="@string/resetButtonLabel" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/sensorLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/sensorLabel"
+                    android:textSize="11sp"
+                    android:textColor="@color/offWhite" />
+
+                <TextView
+                    android:id="@+id/xAxisValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/xAxisValueLabel"
+                    android:textSize="12sp"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/yAxisValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/yAxisValueLabel"
+                    android:textSize="12sp"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/zAxisValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dip"
+                    android:text="@string/zAxisValueLabel"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/startTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/startTimeLabel"
+                    android:textColor="@color/offWhite"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/endTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/endTimeLabel"
+                    android:textColor="@color/offWhite"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/runTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/runTimeLabel"
+                    android:textColor="@color/offWhite"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/ratio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/ratioLabel"
+                    android:textColor="@color/offWhite"
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/speedLabel"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/previousSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/previousSpeedLabel"
+                    android:textColor="@color/offWhite"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/restartCountdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/restartCountdownLabel"
+                    android:textColor="@color/offWhite"
+                    android:textSize="12sp"/>
 
             </LinearLayout>
+        </ScrollView>
 
-            <TextView
-                android:id="@+id/sensorLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:text="@string/sensorLabel"
-                android:textSize="11sp"
-                android:textColor="@color/offWhite" />
 
-            <TextView
-                android:id="@+id/xAxisValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:text="@string/xAxisValueLabel"
-                android:textSize="12sp"
-                android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/offWhite"
+            android:textSize="11sp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom|left"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/logLabel"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp" />
 
-            <TextView
-                android:id="@+id/yAxisValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:text="@string/yAxisValueLabel"
-                android:textSize="12sp"
-                android:textColor="@color/white" />
+    </RelativeLayout>
 
-            <TextView
-                android:id="@+id/zAxisValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dip"
-                android:text="@string/zAxisValueLabel"
-                android:textColor="@color/white"
-                android:textSize="12sp"/>
-
-            <TextView
-                android:id="@+id/startTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:text="@string/startTimeLabel"
-                android:textColor="@color/offWhite"
-                android:textSize="12sp"/>
-
-            <TextView
-                android:id="@+id/endTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:text="@string/endTimeLabel"
-                android:textColor="@color/offWhite"
-                android:textSize="12sp"/>
-
-            <TextView
-                android:id="@+id/runTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/runTimeLabel"
-                android:textColor="@color/offWhite"
-                android:textSize="12sp"/>
-
-            <TextView
-                android:id="@+id/ratio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:text="@string/ratioLabel"
-                android:textColor="@color/offWhite"
-                android:textSize="12sp"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="6dp"
-                android:text="@string/speedLabel"
-                android:textColor="@color/white"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/previousSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/previousSpeedLabel"
-                android:textColor="@color/offWhite"
-                android:textSize="12sp"/>
-
-            <TextView
-                android:id="@+id/restartCountdown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/restartCountdownLabel"
-                android:textColor="@color/offWhite"
-                android:textSize="12sp"/>
-
-        </LinearLayout>
-    </ScrollView>
 </LinearLayout>

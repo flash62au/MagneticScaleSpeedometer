@@ -11,6 +11,8 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -27,6 +29,7 @@ import androidx.appcompat.widget.Toolbar
 
 class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnItemSelectedListener {
     // Add these at the top of your MainActivity class, with other properties
+    private val APP_NAME = "Magnetic Scale Speedometer"
     private val PREFS_NAME = "MagneticScaleSpeedometer"
     private val KEY_SELECTED_SCALE_POSITION = "selectedScale"
     private val KEY_SELECTED_DISTANCE = "distance"
@@ -79,6 +82,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private lateinit var startTimeTextView: TextView
     private lateinit var endTimeTextView: TextView
     private lateinit var runTimeTextView: TextView
+
+    private lateinit var logTextView: TextView
+    private var lastLogMessage: String = ""
+    private var lastReading: Float = 0F
 
     private var hasStarted = false
     private var hasFinished = false
@@ -134,7 +141,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             appVersion = packageInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
-            Log.e("Magnetic Scale Speedometer", "Could not get package info", e) // Consider logging the error
+            Log.e(APP_NAME, "Could not get package info", e) // Consider logging the error
         }
         val appVersionTextView = findViewById<TextView>(R.id.version)
         appVersionTextView.text = getString(R.string.versionLabel, appVersion)
@@ -173,7 +180,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         threshold = sharedPref.getFloat(KEY_THRESHOLD, 50F)
         thresholdValueEditText = findViewById(R.id.thresholdValue)
         thresholdValueEditText.setText(String.format("%.0f",threshold))
-
+        thresholdValueEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                try {
+                    threshold = thresholdValueEditText.getText().toString().toFloat()
+                } catch (e: NumberFormatException) {
+                    threshold = 0F
+                }
+                setThresholds()
+                showLog(getString(R.string.logThresholdChangedLabel))
+            }
+        } )
         // *****************************
 
         ambientValuesEditText = Array(3) { index ->
@@ -187,6 +206,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // *****************************
 
         ratioTextView = findViewById(R.id.ratio)
+
+        // *****************************
+
+        logTextView = findViewById(R.id.log)
 
         // Load the scaleRatios array
         scaleRatioValues = resources.getStringArray(R.array.scaleRatios)
@@ -236,6 +259,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         distance = savedDistance // Update your class member variable
         distanceEditText = findViewById<EditText>(R.id.distanceValue)
         distanceEditText.setText(savedDistance.toString()) // Set the text in the EditText
+        distanceEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                try {
+                    distance = distanceEditText.getText().toString().toFloat()
+                } catch (e: NumberFormatException) {
+                    distance = 0F
+                }
+                showLog(getString(R.string.logDistanceChangedLabel))
+            }
+        } )
 
         // *****************************
 
@@ -243,8 +278,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         ignoreFirstResponseCheckBox.isChecked = true
         ignoreFirstResponse = true
         ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            Log.d("Magnetic Scale Speedometer", "ignoreFirstResponseCheckBox changed: $isChecked")
-            ignoreFirstResponse = isChecked
+                Log.d(APP_NAME, "ignoreFirstResponseCheckBox changed: $isChecked")
+                ignoreFirstResponse = isChecked
+                showLog(getString(R.string.logIgnoreFirstResponseChangedLabel))
         }
 
         // *****************************
@@ -258,6 +294,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         restartInValue = sharedPref.getLong(KEY_RESTART_IN, 10L) // Default to 10 if not found
         restartInEditText = findViewById<EditText>(R.id.restartInValue)
         restartInEditText.setText(restartInValue.toString()) // Set the text in the EditText
+        restartInEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                try {
+                    restartInValue = restartInEditText.getText().toString().toLong()
+                } catch (e: NumberFormatException) {
+                    restartInValue = 0L
+                }
+                showLog(getString(R.string.logRestartChangedLabel))
+            }
+        } )
 
         restartTimerTextView = findViewById(R.id.restartCountdown)
         restartTimerTextView.text = ""
@@ -267,7 +315,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                     restartCountDown--
                     restartTimerTextView.text = getString(R.string.restartCountdownLabel, restartCountDown)
                     Log.d(
-                        "Magnetic Scale Speedometer",
+                        APP_NAME,
                         "Timer fired - resetting sensor readings  $restartCountDown"
                     )
                     if (restartCountDown <= 0) {
@@ -315,16 +363,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             apply()
         }
 
+        setThresholds()
+        hideKeyboard()
+    }
+
+    private fun setThresholds() {
         for (i in 0 until ambientValues.size) {
-//            ambientValues[i] = round(averageValues[i])
             ambientValues[i] = averageValues[i]
             ambientValuesEditText[i].setText(String.format("%.2f",ambientValues[i]))
 
             thresholdLowValues[i] = ambientValues[i] - threshold
             thresholdHighValues[i] = ambientValues[i] + threshold
         }
-
-        hideKeyboard()
     }
 
     private fun resetSensorReadings(isFullReset: Boolean) {
@@ -351,9 +401,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         haveSeenFirstResponse = false
         ignoreFirstResponse = ignoreFirstResponseCheckBox.isChecked
         ignoreFirstResponseCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            Log.d("Magnetic Scale Speedometer", "onCheckedChangeListener: checked: $isChecked")
+            Log.d(APP_NAME, "onCheckedChangeListener: checked: $isChecked")
             ignoreFirstResponse = isChecked
             haveSeenFirstResponse = false
+            showLog(getString(R.string.logIgnoreFirstResponseChangedLabel))
         }
 
         startTimeTextView.text = ""
@@ -417,6 +468,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             if (!isAmbientInitialised) {
                 setAmbientFromCurrent()
                 isAmbientInitialised = true
+                showLog(getString(R.string.logReadyLabel))
             }
         }
         lastXValues.add(value) // Add the new value
@@ -458,34 +510,37 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             addYValueToHistory(event.values[INDEX_Y])
             addZValueToHistory(event.values[INDEX_Z])
 
-//            Log.d("Magnetic Scale Speedometer", "onSensorChanged(): xAxis: $xAxis")
+//            Log.d(APP_NAME, "onSensorChanged(): xAxis: $xAxis")
 
             var axisXYZ = event.values[selectedAxis]
+            lastReading = axisXYZ
             var thresholdLow = thresholdLowValues[selectedAxis]
             var thresholdHigh = thresholdHighValues[selectedAxis]
             var isIncreasing = increasingOrDecreasing[selectedAxis] == INCREASING
             var isDecreasing = increasingOrDecreasing[selectedAxis] == DECREASING
 
             if (isIncreasing) {
-                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): is Increasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
+                Log.d(APP_NAME, "onSensorChanged(): is Increasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
             } else if (isDecreasing) {
-                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): is Decreasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
+                Log.d(APP_NAME, "onSensorChanged(): is Decreasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
             }
+            showLog()
 
             if (axisXYZ >= thresholdLow && axisXYZ <= thresholdHigh) {
-//                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Inside threshold: $axisXYZ - Ignore")
+//                Log.d(APP_NAME, "onSensorChanged(): Inside threshold: $axisXYZ - Ignore")
                 hasDroppedBelowThreshold = true
                 highestXYZ = axisXYZ
                 return
             }
 
             if (!isAmbientInitialised) {
-                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ambient not initialised yet")
+                Log.d(APP_NAME, "onSensorChanged(): Ambient not initialised yet")
+                showLog(getString(R.string.logInitialisingLabel))
                 return
             }
 
             if (!hasDroppedBelowThreshold) {
-//                Log.d("Magnetic Scale Speedometer", "onSensorChanged(): $axisXYZ - Has not dropped below threshold yet")
+//                Log.d(APP_NAME, "onSensorChanged(): $axisXYZ - Has not dropped below threshold yet")
                 return
             }
 
@@ -494,43 +549,44 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) { // something started
                     wasIncreasingOrDecreasingWhenEventStarted = INCREASING
                     highestXYZ = axisXYZ
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Started to look")
+                    Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Started to look")
                 } else if (wasIncreasingOrDecreasingWhenEventStarted == INCREASING) {  // continuing above threshold
                     if (axisXYZ >= highestXYZ) {
                         highestXYZ = axisXYZ
-                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Looking")
+                        Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Looking")
                     } else {
                         triggerNow = true
-                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Trigger")
+                        Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Trigger")
                     }
                 } else { // it has now started but now it is below threshold - should not happen
                     triggerNow = true
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Should not be here")
+                    Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Should not be here")
                 }
             } else if (isDecreasing) {
                 if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) {  // STEADY or DECREASING
                     wasIncreasingOrDecreasingWhenEventStarted = DECREASING
                     highestXYZ = axisXYZ
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - starting to look")
+                    Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - starting to look")
                 } else if (wasIncreasingOrDecreasingWhenEventStarted == DECREASING) {  // continuing below threshold
                     if (axisXYZ <= highestXYZ) {
                         highestXYZ = axisXYZ
-                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - looking")
+                        Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - looking")
                     } else {
                         triggerNow = true
-                        Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Trigger")
+                        Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Trigger")
                     }
                 } else { // it has now started but now it is above threshold - should not happen
                     triggerNow = true
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Should not be here")
+                    Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Should not be here")
                 }
             }
 
             if (triggerNow) {
 
                 if ( (ignoreFirstResponse) && (!haveSeenFirstResponse) ) {
-                    Toast.makeText(this, getString(R.string.ignoreFirstResponseNotice), Toast.LENGTH_SHORT).show()
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ignoring first response")
+//                    Toast.makeText(this, getString(R.string.ignoreFirstResponseNotice), Toast.LENGTH_SHORT).show()
+                    Log.d(APP_NAME, "onSensorChanged(): Ignoring first response")
+                    showLog(getString(R.string.ignoreFirstResponseNotice))
                     haveSeenFirstResponse = true
                     hasStarted = false
                     hasDroppedBelowThreshold = false
@@ -539,10 +595,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 }
 
                 if (!hasStarted) {  // starting
-                    Toast.makeText(this, getString(R.string.startedNotice), Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, getString(R.string.startedNotice), Toast.LENGTH_SHORT).show()
                     startTime = System.currentTimeMillis()
                     highestStart = highestXYZ
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Started: Highest: $highestStart")
+                    Log.d(APP_NAME, "onSensorChanged(): Started: Highest: $highestStart")
+                    showLog(getString(R.string.startedNotice))
                     highestXYZ = 0F
                     hasStarted = true
                     hasDroppedBelowThreshold = false
@@ -551,9 +608,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 }
 
                 if (!hasFinished) {
-                    Toast.makeText(this, getString(R.string.endedNotice), Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, getString(R.string.endedNotice), Toast.LENGTH_SHORT).show()
                     highestEnd = highestXYZ
-                    Log.d("Magnetic Scale Speedometer", "onSensorChanged(): Ended: Highest: $highestEnd")
+                    Log.d(APP_NAME, "onSensorChanged(): Ended: Highest: $highestEnd")
+                    showLog(getString(R.string.endedNotice))
                     endTime = System.currentTimeMillis()
                     startOrEndTimeHasChanged()
                     return
@@ -613,6 +671,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         if (parent?.id == R.id.axisList) { // Check if it's the correct spinner
             selectedAxis = position
+            showLog(getString(R.string.logAxisChangedLabel))
 
 //            val sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
@@ -625,7 +684,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         if (parent?.id == R.id.scalesList) { // Check if it's the correct spinner
             val selectedScale = parent.getItemAtPosition(position).toString()
 //            Toast.makeText(this, "Selected: $selectedScale", Toast.LENGTH_SHORT).show()
-            Log.d("Magnetic Scale Speedometer", "Selected scale: $selectedScale at position $position")
+            Log.d(APP_NAME, "Selected scale: $selectedScale at position $position")
+            showLog(String.format(getString(R.string.logSelectedScaleLabel), selectedScale))
 
             ratio = scaleRatioFloats[position]
             ratioTextView.text = String.format(getString(R.string.ratioLabel), ratio)
@@ -644,7 +704,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         // Another interface callback
         // This is called when the selection disappears from the spinner.
         // For example, when the adapter becomes empty.
-        Log.d("Magnetic Scale Speedometer", "Nothing selected")
+        Log.d(APP_NAME, "Nothing selected")
     }
 
     fun Context.hideKeyboard(view: View) {
@@ -654,5 +714,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
     fun Activity.hideKeyboard() {
         hideKeyboard(currentFocus ?: View(this))
+    }
+
+    fun showLog() {
+        showLog(lastLogMessage)
+    }
+    fun showLog(message: String) {
+        lastLogMessage = message
+        var axis = "X"
+        if (selectedAxis == 1) axis = "Y"
+        else if (selectedAxis == 2) axis = "Z"
+
+        var ignoreFirst = ""
+        if (ignoreFirstResponse) ignoreFirst = getString(R.string.logIgnoreFirstResponseLabel)
+
+        var below:String = "\u2002"
+        if (lastReading <= thresholdLowValues[selectedAxis]) below = "<"
+        var above:String = "\u2002"
+        if (lastReading >= thresholdHighValues[selectedAxis]) above = ">"
+
+        logTextView.text = String.format(getString(R.string.logLabel), axis,
+            below, thresholdLowValues[selectedAxis], thresholdHighValues[selectedAxis], above,
+            ignoreFirst,
+            message)
     }
 }

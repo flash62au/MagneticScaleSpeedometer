@@ -45,4 +45,15 @@
     <string name="restartCountdownLabel">Restarting in %d sec</string>
     <string name="restartInLabel">Restart (sec): </string>
     <string name="notRestartingLabel">Not automatically restarting</string>
+
+    <string name="logLabel">a: %s [ %s %.1f - %.1f %s ] : %s : %s</string>
+    <string name="logSelectedScaleLabel">Selected scale: %s</string>
+    <string name="logIgnoreFirstResponseLabel">1st</string>
+    <string name="logIgnoreFirstResponseChangedLabel">Ignoring first response changed</string>
+    <string name="logInitialisingLabel">Initialising</string>
+    <string name="logReadyLabel">Ready</string>
+    <string name="logAxisChangedLabel">Axis Changed</string>
+    <string name="logRestartChangedLabel">Restart Changed</string>
+    <string name="logThresholdChangedLabel">Threshold Changed</string>
+    <string name="logDistanceChangedLabel">Distance Changed</string>
 </resources>

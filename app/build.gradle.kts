@@ -12,8 +12,8 @@ android {
         applicationId = "com.akersp.magneticscalespeedometer"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.00.007"
+        versionCode = 8
+        versionName = "0.00.008"
         //    remember to change the version in manifest as well-->
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
