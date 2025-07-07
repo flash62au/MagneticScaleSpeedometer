@@ -6,9 +6,12 @@
     <string name="versionLabel">Version: %s</string>
 
     <string name="sensorLabel">Magnetic Field Sensor Data:</string>
-    <string name="xAxisValueLabel">X: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
-    <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
-    <string name="zAxisValueLabel">Z: %.2f μT  (avg: %.1f) (amb: %.2f)</string>
+<!--    <string name="xAxisValueLabel">X: %.2f μT  (avg: %.1f) (amb: %.2f)</string>-->
+<!--    <string name="yAxisValueLabel">Y: %.2f μT  (avg: %.1f) (amb: %.2f)</string>-->
+<!--    <string name="zAxisValueLabel">Z: %.2f μT  (avg: %.1f) (amb: %.2f)</string>-->
+    <string name="xAxisValueLabel">X: %.2f μT \u2003 ambient: %s %.2f %s</string>
+    <string name="yAxisValueLabel">Y: %.2f μT \u2003 ambient: %s %.2f %s</string>
+    <string name="zAxisValueLabel">Z: %.2f μT \u2003 ambient: %s %.2f %s</string>
 
     <string name="resetButtonLabel">Reset</string>
 

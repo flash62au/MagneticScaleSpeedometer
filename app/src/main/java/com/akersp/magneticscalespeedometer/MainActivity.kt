@@ -23,7 +23,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
@@ -494,6 +493,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         setAverageValues(INDEX_Z)
     }
 
+    fun getBelowString(index: Int, reading: Float): String {
+        var below:String = "\u2002"
+        if (index == selectedAxis && reading <= thresholdLowValues[index]) below = "<"
+        return below
+    }
+    fun getAboveString(index: Int, reading: Float): String {
+        var above:String = "\u2002"
+        if (index == selectedAxis && reading >= thresholdHighValues[index]) above = ">"
+        return above
+    }
+
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // You can handle changes in sensor accuracy here if needed
         // For example, you might want to inform the user if the sensor accuracy is low.
@@ -501,10 +511,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
-            // Update the TextViews with the new values
-            xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), event.values[INDEX_X], averageValues[INDEX_X], ambientValues[INDEX_X])
-            yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), event.values[INDEX_Y], averageValues[INDEX_Y], ambientValues[INDEX_Y])
-            zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel), event.values[INDEX_Z], averageValues[INDEX_Z], ambientValues[INDEX_Z])
 
             addXValueToHistory(event.values[INDEX_X])
             addYValueToHistory(event.values[INDEX_Y])
@@ -518,6 +524,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             var thresholdHigh = thresholdHighValues[selectedAxis]
             var isIncreasing = increasingOrDecreasing[selectedAxis] == INCREASING
             var isDecreasing = increasingOrDecreasing[selectedAxis] == DECREASING
+
+//            xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), event.values[INDEX_X], averageValues[INDEX_X], ambientValues[INDEX_X])
+//            yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), event.values[INDEX_Y], averageValues[INDEX_Y], ambientValues[INDEX_Y])
+//            zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel), event.values[INDEX_Z], averageValues[INDEX_Z], ambientValues[INDEX_Z])
+            xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel),
+                event.values[INDEX_X],
+                getBelowString(INDEX_X, event.values[INDEX_X]),
+                ambientValues[INDEX_X],
+                getAboveString(INDEX_X, event.values[INDEX_X]))
+
+            yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel),
+                event.values[INDEX_Y],
+                getBelowString(INDEX_Y, event.values[INDEX_Y]),
+                ambientValues[INDEX_Y],
+                getAboveString(INDEX_Y, event.values[INDEX_Y]))
+
+            zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel),
+                event.values[INDEX_Z],
+                getBelowString(INDEX_Z, event.values[INDEX_Z]),
+                ambientValues[INDEX_Z],
+                getAboveString(INDEX_Z, event.values[INDEX_Z]))
+
 
             if (isIncreasing) {
                 Log.d(APP_NAME, "onSensorChanged(): is Increasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
