@@ -41,8 +41,7 @@ Screen
 Copyright
 ---------
 
-Copyright
-Copyright (C) 2025 Peter Akers ``akersp62 @ gmail.com``   *(remove the spaces)*
+Copyright © 2025 Peter Akers ``akersp62 @ gmail.com``   *(remove the spaces)*
 
 This app is free; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 
