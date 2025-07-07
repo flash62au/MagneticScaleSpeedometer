@@ -37,3 +37,15 @@ Screen
 * **Ignore first response** - The magnets in the loco's motor are likely to trigger the sensor. This option allows you to ignore the first reading (the loco).
 * **Restart (sec)** - Time in seconds. If this is set at anything above zero, the values will automatically clear X seconds after the last successful reading.  Note that This does not reset the ambient values. 
 * **Reset** - Click this to clear both the current ambient values, and the current speed reading, and start a new pass.
+
+Copyright
+---------
+
+Copyright
+Copyright (C) 2025 Peter Akers ``akersp62 @ gmail.com``   *(remove the spaces)*
+
+This app is free; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+This app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the [GNU General Public License](copying.md) along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
