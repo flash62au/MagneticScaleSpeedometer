@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="8"
-    android:versionName="0.00.008" android:installLocation="auto">
-    <!--remember to change the version in gradle.build as well-->
+    android:installLocation="auto">
 
     <application
         android:allowBackup="true"
@@ -15,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MagneticScaleSpeedometer"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -26,6 +25,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".MainActivity"> <!-- Optional: for Up navigation -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" /> <!-- Optional: for Up navigation -->
+        </activity>
+
     </application>
 
 </manifest>

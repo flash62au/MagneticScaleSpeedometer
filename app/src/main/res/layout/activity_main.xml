@@ -303,41 +303,139 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/sensorLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="0dp"
-                    android:text="@string/sensorLabel"
-                    android:textSize="11sp"
-                    android:textColor="@color/offWhite" />
+<!--                <TextView-->
+<!--                    android:id="@+id/sensorLabel"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:gravity="center"-->
+<!--                    android:layout_marginBottom="0dp"-->
+<!--                    android:text="@string/sensorLabel"-->
+<!--                    android:textSize="11sp"-->
+<!--                    android:textColor="@color/offWhite" />-->
 
-                <TextView
-                    android:id="@+id/xAxisValue"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="0dp"
-                    android:text="@string/xAxisValueLabel"
-                    android:textSize="12sp"
-                    android:textColor="@color/white" />
+                    android:weightSum="1"
+                    android:orientation="horizontal"
+                    android:layout_margin="0dp" >
+
+                    <TextView
+                        android:id="@+id/axisTitleLabel"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight=".4"
+                        android:gravity="center"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/axisTitleLabel"
+                        android:textSize="11sp"
+                        android:textColor="@color/offWhite" />
+
+                    <TextView
+                        android:id="@+id/ambientTitleLabel"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight=".6"
+                        android:gravity="center"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/ambientTitleLabel"
+                        android:textSize="11sp"
+                        android:textColor="@color/offWhite" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:weightSum="1"
+                    android:orientation="horizontal"
+                    android:layout_margin="0dp" >
+
+                    <TextView
+                        android:id="@+id/xAxisValue"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight=".4"
+                        android:gravity="center"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/xAxisValueLabel"
+                        android:textSize="12sp"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/xAmbientValue"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight=".6"
+                        android:gravity="center"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/ambientValueLabel"
+                        android:textSize="12sp"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:weightSum="1"
+                android:orientation="horizontal"
+                android:layout_margin="0dp" >
 
                 <TextView
                     android:id="@+id/yAxisValue"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight=".4"
+                    android:gravity="center"
                     android:layout_marginBottom="0dp"
                     android:text="@string/yAxisValueLabel"
                     android:textSize="12sp"
                     android:textColor="@color/white" />
 
                 <TextView
-                    android:id="@+id/zAxisValue"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/yAmbientValue"
                     android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight=".6"
+                    android:gravity="center"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/ambientValueLabel"
+                    android:textSize="12sp"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:weightSum="1"
+                android:orientation="horizontal"
+                android:layout_margin="0dp" >
+
+                <TextView
+                    android:id="@+id/zAxisValue"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight=".4"
+                    android:gravity="center"
                     android:layout_marginBottom="4dip"
                     android:text="@string/zAxisValueLabel"
                     android:textColor="@color/white"
                     android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/zAmbientValue"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight=".6"
+                    android:gravity="center"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/ambientValueLabel"
+                    android:textSize="12sp"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
 
                 <TextView
                     android:id="@+id/startTime"

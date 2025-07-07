@@ -2,6 +2,7 @@ package com.akersp.magneticscalespeedometer
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.Sensor
@@ -14,6 +15,8 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
@@ -23,6 +26,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
@@ -50,11 +54,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private lateinit var sensorManager: SensorManager
     private var magnetometer: Sensor? = null
 
-    private lateinit var xAxisTextView: TextView
-
     private lateinit var resetButton: Button
+
+    private lateinit var xAxisTextView: TextView
     private lateinit var yAxisTextView: TextView
     private lateinit var zAxisTextView: TextView
+    private lateinit var xAmbientTextView: TextView
+    private lateinit var yAmbientTextView: TextView
+    private lateinit var zAmbientTextView: TextView
 
     private val thresholdLowValues: Array<Float> = arrayOf(0F, 0F, 0F)
     private val thresholdHighValues: Array<Float> = arrayOf(0F, 0F, 0F)
@@ -149,6 +156,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         xAxisTextView = findViewById(R.id.xAxisValue)
         yAxisTextView = findViewById(R.id.yAxisValue)
         zAxisTextView = findViewById(R.id.zAxisValue)
+        xAmbientTextView = findViewById(R.id.xAmbientValue)
+        yAmbientTextView = findViewById(R.id.yAmbientValue)
+        zAmbientTextView = findViewById(R.id.zAmbientValue)
 
         // Get an instance of the SensorManager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -161,6 +171,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             xAxisTextView.text = getString(R.string.warningNotAvailable)
             yAxisTextView.text = ""
             zAxisTextView.text = ""
+            xAmbientTextView.text = ""
+            yAmbientTextView.text = ""
+            zAmbientTextView.text = ""
         }
 
         // *****************************
@@ -363,6 +376,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         handler.removeCallbacks(timedRestartRunnable)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu) // Replace R.menu.main_menu with your menu file name
+        return true
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_about -> {
+                // Launch AboutActivity
+                val intent = Intent(this, AboutActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun setAmbientFromCurrent() {
         threshold = thresholdValueEditText.getText().toString().toFloat()
         with(sharedPref.edit()) {
@@ -527,11 +558,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             var isIncreasing = increasingOrDecreasing[selectedAxis] == INCREASING
             var isDecreasing = increasingOrDecreasing[selectedAxis] == DECREASING
 
-//            xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel), event.values[INDEX_X], averageValues[INDEX_X], ambientValues[INDEX_X])
-//            yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel), event.values[INDEX_Y], averageValues[INDEX_Y], ambientValues[INDEX_Y])
-//            zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel), event.values[INDEX_Z], averageValues[INDEX_Z], ambientValues[INDEX_Z])
             xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel),
-                event.values[INDEX_X],
+                event.values[INDEX_X])
+            xAmbientTextView.text = String.format(getString(R.string.ambientValueLabel),
                 getBelowString(INDEX_X, event.values[INDEX_X]),
                 thresholdLowValues[INDEX_X],
                 ambientValues[INDEX_X],
@@ -539,7 +568,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 getAboveString(INDEX_X, event.values[INDEX_X]))
 
             yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel),
-                event.values[INDEX_Y],
+                event.values[INDEX_Y])
+            yAmbientTextView.text = String.format(getString(R.string.ambientValueLabel),
                 getBelowString(INDEX_Y, event.values[INDEX_Y]),
                 thresholdLowValues[INDEX_Y],
                 ambientValues[INDEX_Y],
@@ -547,7 +577,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 getAboveString(INDEX_Y, event.values[INDEX_Y]))
 
             zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel),
-                event.values[INDEX_Z],
+                event.values[INDEX_Z])
+            zAmbientTextView.text = String.format(getString(R.string.ambientValueLabel),
                 getBelowString(INDEX_Z, event.values[INDEX_Z]),
                 thresholdLowValues[INDEX_Z],
                 ambientValues[INDEX_Z],
