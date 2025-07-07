@@ -53,6 +53,7 @@
                 android:layout_marginTop="6dp"
                 android:layout_gravity="center"
                 android:text="@string/app_name"
+                android:fontFamily="sans-serif-condensed"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
             <TextView

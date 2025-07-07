@@ -4,6 +4,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -36,6 +37,17 @@ class AboutActivity : AppCompatActivity() {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             versionTextView.text = getString(R.string.version_placeholder, "N/A")
+        }
+
+        val aboutDescriptionTextView: TextView = findViewById(R.id.aboutDescriptionTextView)
+        val htmlDescription = getString(R.string.about_page_description)
+
+        // Use Html.fromHtml to set the text
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            aboutDescriptionTextView.text = Html.fromHtml(htmlDescription, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            @Suppress("DEPRECATION")
+            aboutDescriptionTextView.text = Html.fromHtml(htmlDescription)
         }
     }
 
