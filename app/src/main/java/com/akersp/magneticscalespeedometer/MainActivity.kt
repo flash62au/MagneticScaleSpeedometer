@@ -29,6 +29,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import kotlin.math.round
 
 class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnItemSelectedListener {
     // Add these at the top of your MainActivity class, with other properties
@@ -103,6 +104,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
     private var highestStart: Float = 0F
     private var highestEnd: Float = 0F
+    private var highestContinuous: Float = 0F
 
     private lateinit var scalesSpinner: Spinner
     private lateinit var scaleRatioValues: Array<String> // To store ratios as strings
@@ -429,6 +431,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         lastZValues.clear() // Clear the history
 
         highestXYZ = 0F
+        highestContinuous = 0F
 
         threshold = thresholdValueEditText.getText().toString().toFloat()
         with(sharedPref.edit()) {
@@ -536,6 +539,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         if (index == selectedAxis && reading >= thresholdHighValues[index]) above = ">"
         return above
     }
+    fun getIncreasingDecreasingString(index: Int, reading: Float): String {
+        var result:String = "\u2002"
+        if ( (index != selectedAxis)
+            || (reading >= thresholdLowValues[index] && reading <= thresholdHighValues[index]) ) return result
+
+        if (increasingOrDecreasing[index] == INCREASING) {
+            result = "▲"
+            if (reading < highestContinuous) result = "▲▼"
+        } else if (increasingOrDecreasing[index] == DECREASING) {
+            result = "▼"
+            if (reading > highestContinuous) result = "▼▲"
+        }
+        Log.d(APP_NAME, "getIncreasingDecreasingString(): Result: $result Highest: $highestContinuous Reading: $reading")
+
+        return result
+    }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // You can handle changes in sensor accuracy here if needed
@@ -545,9 +564,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
 
-            addXValueToHistory(event.values[INDEX_X])
-            addYValueToHistory(event.values[INDEX_Y])
-            addZValueToHistory(event.values[INDEX_Z])
+            addXValueToHistory(round(event.values[INDEX_X] * 100) / 100)
+            addYValueToHistory(round(event.values[INDEX_Y] * 100) / 100)
+            addZValueToHistory(round(event.values[INDEX_Z] * 100) / 100)
 
 //            Log.d(APP_NAME, "onSensorChanged(): xAxis: $xAxis")
 
@@ -559,7 +578,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             var isDecreasing = increasingOrDecreasing[selectedAxis] == DECREASING
 
             xAxisTextView.text = String.format(getString(R.string.xAxisValueLabel),
-                event.values[INDEX_X])
+                event.values[INDEX_X],
+                getIncreasingDecreasingString(INDEX_X, axisXYZ))
             xAmbientTextView.text = String.format(getString(R.string.ambientValueLabel),
                 getBelowString(INDEX_X, event.values[INDEX_X]),
                 thresholdLowValues[INDEX_X],
@@ -568,7 +588,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 getAboveString(INDEX_X, event.values[INDEX_X]))
 
             yAxisTextView.text = String.format(getString(R.string.yAxisValueLabel),
-                event.values[INDEX_Y])
+                event.values[INDEX_Y],
+                getIncreasingDecreasingString(INDEX_Y, axisXYZ))
             yAmbientTextView.text = String.format(getString(R.string.ambientValueLabel),
                 getBelowString(INDEX_Y, event.values[INDEX_Y]),
                 thresholdLowValues[INDEX_Y],
@@ -577,7 +598,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 getAboveString(INDEX_Y, event.values[INDEX_Y]))
 
             zAxisTextView.text = String.format(getString(R.string.zAxisValueLabel),
-                event.values[INDEX_Z])
+                event.values[INDEX_Z],
+                getIncreasingDecreasingString(INDEX_Z, axisXYZ))
             zAmbientTextView.text = String.format(getString(R.string.ambientValueLabel),
                 getBelowString(INDEX_Z, event.values[INDEX_Z]),
                 thresholdLowValues[INDEX_Z],
@@ -585,18 +607,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 thresholdHighValues[INDEX_Z],
                 getAboveString(INDEX_Z, event.values[INDEX_Z]))
 
-
-            if (isIncreasing) {
-                Log.d(APP_NAME, "onSensorChanged(): is Increasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
-            } else if (isDecreasing) {
-                Log.d(APP_NAME, "onSensorChanged(): is Decreasing: $axisXYZ  started as: $wasIncreasingOrDecreasingWhenEventStarted")
-            }
             showLog()
 
             if (axisXYZ >= thresholdLow && axisXYZ <= thresholdHigh) {
 //                Log.d(APP_NAME, "onSensorChanged(): Inside threshold: $axisXYZ - Ignore")
                 hasDroppedBelowThreshold = true
                 highestXYZ = axisXYZ
+                highestContinuous = axisXYZ
                 return
             }
 
@@ -604,6 +621,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 Log.d(APP_NAME, "onSensorChanged(): Ambient not initialised yet")
                 showLog(getString(R.string.logInitialisingLabel))
                 return
+            }
+
+            if (isIncreasing) {
+                if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) { // something started
+                    highestContinuous = (round(axisXYZ * 100) / 100)
+                } else if (wasIncreasingOrDecreasingWhenEventStarted == INCREASING) {  // continuing above threshold
+                    if (axisXYZ >= highestContinuous) highestContinuous = axisXYZ
+                }
+            } else if (isDecreasing) {
+                if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) {  // STEADY or DECREASING
+                    highestContinuous = (round(axisXYZ * 100) / 100)
+                } else if (wasIncreasingOrDecreasingWhenEventStarted == DECREASING) {  // continuing below threshold
+                    if (axisXYZ <= highestContinuous) highestContinuous = axisXYZ
+                }
             }
 
             if (!hasDroppedBelowThreshold) {
@@ -616,35 +647,36 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
                 if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) { // something started
                     wasIncreasingOrDecreasingWhenEventStarted = INCREASING
                     highestXYZ = axisXYZ
-                    Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Started to look")
+                    Log.d(APP_NAME, "onSensorChanged(): Increasing: Highest: $highestXYZ : $axisXYZ - Started to look")
                 } else if (wasIncreasingOrDecreasingWhenEventStarted == INCREASING) {  // continuing above threshold
                     if (axisXYZ >= highestXYZ) {
                         highestXYZ = axisXYZ
-                        Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Looking")
+                        Log.d(APP_NAME, "onSensorChanged(): Increasing: Highest: $highestXYZ : $axisXYZ - Looking")
                     } else {
                         triggerNow = true
-                        Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Trigger")
+                        Log.d(APP_NAME, "onSensorChanged(): Increasing: Highest: $highestXYZ : $axisXYZ - Trigger")
                     }
                 } else { // it has now started but now it is below threshold - should not happen
                     triggerNow = true
-                    Log.d(APP_NAME, "onSensorChanged(): Increasing: $highestXYZ : $axisXYZ - Should not be here")
+                    Log.d(APP_NAME, "onSensorChanged(): Increasing:Highest:  $highestXYZ : $axisXYZ - Should not be here")
                 }
+
             } else if (isDecreasing) {
                 if (wasIncreasingOrDecreasingWhenEventStarted == STEADY) {  // STEADY or DECREASING
                     wasIncreasingOrDecreasingWhenEventStarted = DECREASING
                     highestXYZ = axisXYZ
-                    Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - starting to look")
+                    Log.d(APP_NAME, "onSensorChanged(): Decreasing: Highest: $highestXYZ : $axisXYZ - starting to look")
                 } else if (wasIncreasingOrDecreasingWhenEventStarted == DECREASING) {  // continuing below threshold
                     if (axisXYZ <= highestXYZ) {
                         highestXYZ = axisXYZ
-                        Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - looking")
+                        Log.d(APP_NAME, "onSensorChanged(): Decreasing: Highest: $highestXYZ : $axisXYZ - looking")
                     } else {
                         triggerNow = true
-                        Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Trigger")
+                        Log.d(APP_NAME, "onSensorChanged(): Decreasing: Highest: $highestXYZ : $axisXYZ - Trigger")
                     }
                 } else { // it has now started but now it is above threshold - should not happen
                     triggerNow = true
-                    Log.d(APP_NAME, "onSensorChanged(): Decreasing: $highestXYZ : $axisXYZ - Should not be here")
+                    Log.d(APP_NAME, "onSensorChanged(): Decreasing: Highest: $highestXYZ : $axisXYZ - Should not be here")
                 }
             }
 

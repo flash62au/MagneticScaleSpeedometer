@@ -35,9 +35,9 @@
     <string name="sensorLabel">Magnetic Field Sensor Data:</string>
     <string name="axisTitleLabel">Current</string>
     <string name="ambientTitleLabel">Ambient ± Threshold</string>
-    <string name="xAxisValueLabel">X: %.2f μT</string>
-    <string name="yAxisValueLabel">Y: %.2f μT</string>
-    <string name="zAxisValueLabel">Z: %.2f μT</string>
+    <string name="xAxisValueLabel">X: %.2f μT %s</string>
+    <string name="yAxisValueLabel">Y: %.2f μT %s</string>
+    <string name="zAxisValueLabel">Z: %.2f μT %s</string>
 
     <string name="ambientValueLabel">%s %.2f\u2014%.2f\u2014%.2f %s</string>
 
