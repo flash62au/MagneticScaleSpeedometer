@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -49,6 +50,9 @@ class AboutActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             aboutDescriptionTextView.text = Html.fromHtml(htmlDescription)
         }
+        // Make links clickable
+        aboutDescriptionTextView.movementMethod = LinkMovementMethod.getInstance()
+
     }
 
     // Handle Up button press in the toolbar (if you added one)

@@ -30,6 +30,10 @@
     <p>The indicator beside the axis will start blank, then go to ▲ as the magnet approaches, then as it starts to pass will go to ▲▼, then finally blank again.  (Or ▼ then ▲▼ if the polarity is reversed.)</p>
     <p>If the indicator flickers it means the magnetic field is probably too weak for a clean read. Try moving the phone closer, or try a stronger magnet (or two magnets together)</p>
 
+    <h3>Additional Information</h3>
+    <p><a href="https://github.com/flash62au/MagneticScaleSpeedometer/blob/master/README.md">Readme</a>
+    &nbsp &nbsp &nbsp &nbsp <a href="https://github.com/flash62au/MagneticScaleSpeedometer">Source code</a>
+    &nbsp &nbsp &nbsp &nbsp <a href="https://github.com/flash62au/MagneticScaleSpeedometer/blob/master/copying.md">Licence</a></p>
     ]]></string>
     <string name="copyright_text">© 2025 Peter Akers. All rights reserved.  (Open Source, GNU)</string>
     <string name="about">About</string>
