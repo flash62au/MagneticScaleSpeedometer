@@ -22,7 +22,8 @@ Setup
 
 **Magnets**
 
-* It is important that the two magnets are 'similar' in size and magnetic properties.  (They don't have to absolutely identical.)  
+* It is important that the two magnets are 'similar' in size and magnetic properties.  (They don't have to absolutely identical.)
+* The polarity of the magnets does not matter
 * They should be placed a 'similar' distance to the left/right 'edge' of each carriage.  i.e. So they will pass the phone at a similar distance.
 * The distance between the magnets does not matter, other than if they are too close the app may not recognise that the passing of the first magnet has ended.
 * Similarly, the carriage carrying the magnets should not be too close to the loco.
@@ -37,6 +38,14 @@ Screen
 * **Ignore first response** - The magnets in the loco's motor are likely to trigger the sensor. This option allows you to ignore the first reading (the loco).
 * **Restart (sec)** - Time in seconds. If this is set at anything above zero, the values will automatically clear X seconds after the last successful reading.  Note that This does not reset the ambient values. 
 * **Reset** - Click this to clear both the current ambient values, and the current speed reading, and start a new pass.
+
+Usage
+-----
+
+As the magnets pass the phone what you are wanting to see is the sensor readings go smoothly up then down. (Or down then up depending on the polarity of either or both the magnets.)
+The indicator beside the axis will start blank, then go to ▲ as the magnet approaches, then as it starts to pass will go to ▲▼, then finally blank again.  (or ▼ then ▲▼ if the polarity is reversed.)
+If the indicator flickers it means the magnetic field is probably too weak for a clean read. Try moving the phone closer, or try a stronger magnet (or two magnets together)
+
 
 Copyright
 ---------
