@@ -26,7 +26,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import kotlin.math.round
@@ -180,6 +179,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         // *****************************
 
+        logTextView = findViewById(R.id.log)
+
+        // *****************************
+
         startTimeTextView = findViewById(R.id.startTime)
         endTimeTextView = findViewById(R.id.endTime)
         runTimeTextView = findViewById(R.id.runTime)
@@ -192,20 +195,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         // *****************************
 
-        threshold = sharedPref.getFloat(KEY_THRESHOLD, 50F)
+        threshold = sharedPref.getFloat(KEY_THRESHOLD, 20F)
+        if (threshold == 999F) threshold = 20F
         thresholdValueEditText = findViewById(R.id.thresholdValue)
         thresholdValueEditText.setText(String.format("%.0f",threshold))
         thresholdValueEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                try {
-                    threshold = thresholdValueEditText.getText().toString().toFloat()
-                } catch (e: NumberFormatException) {
-                    threshold = 0F
-                }
-                setThresholds()
-                showLog(getString(R.string.logThresholdChangedLabel))
+                getThreshold()
             }
         } )
         // *****************************
@@ -223,8 +221,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         ratioTextView = findViewById(R.id.ratio)
 
         // *****************************
-
-        logTextView = findViewById(R.id.log)
 
         // Load the scaleRatios array
         scaleRatioValues = resources.getStringArray(R.array.scaleRatios)
@@ -397,14 +393,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     }
 
     private fun setAmbientFromCurrent() {
-        threshold = thresholdValueEditText.getText().toString().toFloat()
+        getThreshold()
         with(sharedPref.edit()) {
             putFloat(KEY_THRESHOLD, threshold)
             apply()
         }
-
         setThresholds()
         hideKeyboard()
+    }
+
+    private fun getThreshold() {
+        if (!thresholdValueEditText.getText().isEmpty()) {
+            try {
+                threshold = thresholdValueEditText.getText().toString().toFloat()
+                showLog(getString(R.string.logThresholdChangedLabel))
+            } catch (e: NumberFormatException) {
+                threshold = 0F
+            }
+        } else {
+            threshold = 0F
+        }
+
+        if (threshold == 0F) {
+            threshold = 999F
+            showLog(getString(R.string.logThresholdZeroLabel))
+        }
+
+        setThresholds()
     }
 
     private fun setThresholds() {
@@ -433,7 +448,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         highestXYZ = 0F
         highestContinuous = 0F
 
-        threshold = thresholdValueEditText.getText().toString().toFloat()
+        getThreshold()
         with(sharedPref.edit()) {
             putFloat(KEY_THRESHOLD, threshold)
             apply()
@@ -465,7 +480,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             distanceEditText.error = "Invalid number"
         }
 
-        restartInValue = restartInEditText.getText().toString().toLong()
+        try {
+            restartInValue = restartInEditText.getText().toString().toLong()
+        } catch (e: NumberFormatException) {
+            restartInValue = 0L
+        }
         with(sharedPref.edit()) {
             putLong(KEY_RESTART_IN, restartInValue)
             apply()
@@ -727,7 +746,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
 
         startTimeTextView.text = String.format(getString(R.string.startTimeLabel), startTime, highestStart)
 
-        runTime = 0L;
+        runTime = 0L
         if ( (hasStarted) && (endTime != 0L) ) {
             runTime = endTime - startTime
             hasFinished = true
@@ -827,9 +846,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
         var ignoreFirst = ""
         if (ignoreFirstResponse) ignoreFirst = getString(R.string.logIgnoreFirstResponseLabel)
 
-        var below:String = "\u2002"
+        var below = "\u2002"
         if (lastReading <= thresholdLowValues[selectedAxis]) below = "<"
-        var above:String = "\u2002"
+        var above = "\u2002"
         if (lastReading >= thresholdHighValues[selectedAxis]) above = ">"
 
         logTextView.text = String.format(getString(R.string.logLabel), axis,

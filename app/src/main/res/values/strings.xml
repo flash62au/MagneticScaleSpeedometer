@@ -96,6 +96,7 @@
     <string name="logAxisChangedLabel">Axis Changed</string>
     <string name="logRestartChangedLabel">Restart Changed</string>
     <string name="logThresholdChangedLabel">Threshold Changed</string>
+    <string name="logThresholdZeroLabel">Threshold must be greater than zero (0)</string>
     <string name="logDistanceChangedLabel">Distance Changed</string>
 
     <string name="menuAbout">About</string>
