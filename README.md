@@ -3,7 +3,7 @@ Magnetic Scale Speedometer
 
 **Scale speedometer using an Android phone and two magnets**
 
-Concept based on a suggestion by *Brendan Schyve*
+Concept based on a suggestion by *Brendan S.*
 
 This is an experimental app that uses the uses the phone's magnetometer sensor to calculate scale speed.
 
@@ -46,6 +46,10 @@ As the magnets pass the phone what you are wanting to see is the sensor readings
 The indicator beside the axis will start blank, then go to ▲ as the magnet approaches, then as it starts to pass will go to ▲▼, then finally blank again.  (or ▼ then ▲▼ if the polarity is reversed.)
 If the indicator flickers it means the magnetic field is probably too weak for a clean read. Try moving the phone closer, or try a stronger magnet (or two magnets together)
 
+Change Log
+----------
+
+See [Change Log](change_log.md).
 
 Copyright
 ---------

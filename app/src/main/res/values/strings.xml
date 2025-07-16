@@ -6,8 +6,8 @@
     <string name="version_placeholder">Version %s</string> <!-- %s will be replaced by the actual version -->
     <string name="about_page_description"><![CDATA[
     <p>Scale speedometer using an Android phone and two magnets</p>
-    <p><i>Based on a suggestion by Brendan Schyve</i></p>
-    <p>This is an app that uses the phone\'s magnetometer sensor to calculate scale speed.</p>
+    <p>This is a free, open-source, app that uses the phone\'s magnetometer sensor to calculate scale speed.</p>
+    <p><i>Based on a suggestion by Brendan S.</i></p>
     <h3>Magnets</h3>
     <ul>
         <li>The two magnets should be \'similar\' in size and magnetic properties.</li>
@@ -98,6 +98,8 @@
     <string name="logThresholdChangedLabel">Threshold Changed</string>
     <string name="logThresholdZeroLabel">Threshold must be greater than zero (0)</string>
     <string name="logDistanceChangedLabel">Distance Changed</string>
+
+    <string name="backPressTwiceToast">Press \'Back\' again to exit</string>
 
     <string name="menuAbout">About</string>
 </resources>

@@ -26,6 +26,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import kotlin.math.round
@@ -133,6 +135,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     private var restartCountDown = 10L //seconds
     private lateinit var restartTimerTextView: TextView
     private lateinit var restartInEditText: EditText
+
+    private var backPressedOnce = false
+    private val backPressedToast: Toast by lazy {
+        Toast.makeText(this, getString(R.string.backPressTwiceToast), Toast.LENGTH_SHORT)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -351,6 +358,30 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
             // Schedule the next execution
             handler.postDelayed(timedRestartRunnable, RESTART_INTERVAL)
         }
+
+        // *****************************
+
+        // This callback will only be called when MyLifecycleOwner is Lifecycle.State.STARTED
+        val callback = object : OnBackPressedCallback(true /* enabled by default */) {
+            override fun handleOnBackPressed() {
+                if (backPressedOnce) {
+                    // If back is pressed twice within a short time, finish the activity
+                    backPressedToast.cancel() // Cancel the toast if it's showing
+                    finish()
+                } else {
+                    backPressedOnce = true
+                    backPressedToast.show()
+
+                    // Reset backPressedOnce after a delay (e.g., 2 seconds)
+                    // You can use a Handler or Coroutine for this
+                    window.decorView.postDelayed({
+                        backPressedOnce = false
+                    }, 2000) // 2000 milliseconds = 2 seconds
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
+
 
         // *****************************
 
