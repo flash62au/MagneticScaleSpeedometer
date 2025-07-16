@@ -41,7 +41,9 @@ Usage
 -----
 
 As the magnets pass the phone what you are wanting to see is the sensor readings go smoothly up then down. (Or down then up depending on the polarity of either or both the magnets.)
+
 The indicator beside the axis will start blank, then go to ▲ as the magnet approaches, then as it starts to pass will go to ▲▼, then finally blank again.  (or ▼ then ▲▼ if the polarity is reversed.)
+
 If the indicator flickers it means the magnetic field is probably too weak for a clean read. Try moving the phone closer, or try a stronger magnet (or two magnets together)
 
 Change Log
