@@ -13,8 +13,6 @@ You just need:
  
 The app reads the passing of the magnets and calculates the speed.
 
-It is in a very early state at the moment and may yet prove impractical or unworkable.
-
 Note that the magnets in the loco's motor are likely to trigger the sensor, so there is an option to ignore the first reading (the loco).
 
 Setup
