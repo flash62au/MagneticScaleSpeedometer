@@ -5,7 +5,7 @@ Magnetic Scale Speedometer
 
 Concept based on a suggestion by *Brendan S.*
 
-This is an experimental app that uses the uses the phone's magnetometer sensor to calculate scale speed.
+This is an app that uses the phone's magnetometer sensor to calculate scale speed.
 
 You just need:
 * the app, and 

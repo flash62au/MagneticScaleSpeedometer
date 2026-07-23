@@ -28,8 +28,12 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import kotlin.math.round
 
 class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnItemSelectedListener {
@@ -142,11 +146,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener, AdapterView.OnIte
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val mainRoot: View = findViewById(R.id.main_root)
         val toolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(toolbar)
+
+        ViewCompat.setOnApplyWindowInsetsListener(mainRoot) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         sharedPref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 

@@ -6,14 +6,14 @@ plugins {
 
 android {
     namespace = "com.akersp.magneticscalespeedometer"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.akersp.magneticscalespeedometer"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 12
-        versionName = "1.00.002"
+        targetSdk = 36
+        versionCode = 13
+        versionName = "1.00.003"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
